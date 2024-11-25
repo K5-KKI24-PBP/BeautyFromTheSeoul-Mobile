@@ -41,3 +41,18 @@ This application is going to utilize the dataset [Skin Care](https://www.kaggle.
 ## Roles
 1. User: View, rate, and leave a comment on products, add product to favorites, RSVP to events, submit ads.
 2. Admin: Add, delete, edit products, delete reviews, approve ads, create events, add store location, and everything else a User can do.
+
+## Integration with the web service to connect to the web application 
+| Feature | HTTP Request | URL |
+| ------------- | ------------- | ------------- |
+| Register | POST | /register/ |
+| Login | POST | /login/ |
+| Logout | GET | /logout/ |
+| Create Ad, Location, Product, Event, Review | POST | /create_(ad/location/product/event/review)/ |
+| Edit Ad, Location, Product, Event | GET & POST | /edit_(ad/location/product/event)/ |
+| Delete Ad, Location, Product, Event, Review | POST | /delete_(ad/location/product/event/review)/ |
+| Approve Ad | POST | /approve_ad/ |
+| Filter Products, Locations, Events | GET | /filter_(locations/events)/ |
+| RSVP for an event | POST | /logout/ |
+| Get Product | POST | /get_product/ |
+
