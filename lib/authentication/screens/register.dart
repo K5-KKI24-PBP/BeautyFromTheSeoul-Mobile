@@ -30,7 +30,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:8000//auth/register-flutter/'),
+        Uri.parse('https://beauty-from-the-seoul.vercel.app/auth/register-flutter/'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'username': _usernameController.text.trim(),
