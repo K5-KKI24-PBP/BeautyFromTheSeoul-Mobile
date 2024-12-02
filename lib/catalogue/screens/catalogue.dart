@@ -24,7 +24,7 @@ class _CataloguePageState extends State<CataloguePage> {
   Future<void> fetchProducts() async {
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:8000/catalogue/get_product/'),
+        Uri.parse('https://beauty-from-the-seoul.vercel.app/catalogue/get_product/'),
       );
 
       if (response.statusCode == 200) {

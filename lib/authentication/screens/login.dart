@@ -59,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
       print('Attempting login...');
       
       final response = await request.login(
-        "http://localhost:8000/auth/login-flutter/",
+        "https://beauty-from-the-seoul.vercel.app/auth/login-flutter/",
         {
           'username': _usernameController.text.trim(),
           'password': _passwordController.text,
