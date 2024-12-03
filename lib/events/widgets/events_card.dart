@@ -48,7 +48,7 @@ class EventCard extends StatelessWidget {
               '$name in $location', // Dynamically replace with event name and location
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 24, // Adjust font size as needed
+                fontSize: 20, // Adjust font size as needed
                 fontWeight: FontWeight.bold,
                 color: Colors.white, // White text color
               ),
