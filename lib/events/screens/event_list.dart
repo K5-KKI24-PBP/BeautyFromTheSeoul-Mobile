@@ -6,6 +6,7 @@ import 'package:beauty_from_the_seoul_mobile/events/models/events.dart';
 import 'package:beauty_from_the_seoul_mobile/events/widgets/events_card.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:beauty_from_the_seoul_mobile/shared/widgets/navbar.dart';
 
 class EventPage extends StatefulWidget {
   const EventPage({Key? key}) : super(key: key);
@@ -19,8 +20,6 @@ class _EventsPageState extends State<EventPage> {
     try {
       final response = await http.get(Uri.parse('http://beauty-from-the-seoul.vercel.app/events/event-json/'));
       if (response.statusCode == 200) {
-        // final jsonData = json.decode(response.body);
-        // print('Response JSON: $jsonData'); // To inspect the raw JSON data
         return eventsFromJson(response.body);
       } else {
         throw Exception('Failed to load events: Status code ${response.statusCode}');
@@ -36,7 +35,8 @@ class _EventsPageState extends State<EventPage> {
     final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Promotion Events',
+        title: const Text(
+          'Promotion Events',
           style: TextStyle(
             color: Colors.black,
             fontSize: 24,
@@ -88,7 +88,8 @@ class _EventsPageState extends State<EventPage> {
                     },
                   );
                 } else {
-                  return const Text('No promotion events available',
+                  return const Text(
+                    'No promotion events available',
                     style: TextStyle(fontSize: 20, color: Colors.black),
                   );
                 }
@@ -97,6 +98,7 @@ class _EventsPageState extends State<EventPage> {
           ),
         ],
       ),
+      bottomNavigationBar: const Material3BottomNav(), // Added Navbar here
     );
   }
 }
