@@ -7,6 +7,7 @@ import 'package:beauty_from_the_seoul_mobile/events/models/events.dart';
 import 'package:beauty_from_the_seoul_mobile/events/widgets/events_card.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:beauty_from_the_seoul_mobile/shared/widgets/navbar.dart';
 
 class EventPage extends StatefulWidget {
   const EventPage({Key? key}) : super(key: key);
@@ -31,6 +32,7 @@ class _EventsPageState extends State<EventPage> {
         // Sorting the events based on start date
         events.sort((a, b) => a.fields.startDate.compareTo(b.fields.startDate));
         return events;
+
       } else {
         throw Exception('Failed to load events');
       }
@@ -83,7 +85,8 @@ class _EventsPageState extends State<EventPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Promotion Events',
+        title: const Text(
+          'Promotion Events',
           style: TextStyle(
             color: Colors.white,
             fontSize: 24,
@@ -181,7 +184,8 @@ class _EventsPageState extends State<EventPage> {
                     },
                   );
                 } else {
-                  return const Text('No promotion events available',
+                  return const Text(
+                    'No promotion events available',
                     style: TextStyle(fontSize: 20, color: Colors.black),
                   );
                 }
@@ -190,6 +194,7 @@ class _EventsPageState extends State<EventPage> {
           ),
         ],
       ),
+      bottomNavigationBar: const Material3BottomNav(), // Added Navbar here
     );
   }
 }
