@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:beauty_from_the_seoul_mobile/catalogue/models/products.dart';
+import 'package:beauty_from_the_seoul_mobile/shared/widgets/navbar.dart';
 
 class CataloguePage extends StatefulWidget {
   final bool isAdmin;
@@ -78,6 +79,7 @@ class _CataloguePageState extends State<CataloguePage> {
           );
         },
       ),
+      bottomNavigationBar: const Material3BottomNav(),
     );
   }
 }
