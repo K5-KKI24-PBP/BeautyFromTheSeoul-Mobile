@@ -111,7 +111,7 @@ class _EventFormState extends State<EventForm> {
                       if (_formKey.currentState!.validate()) {
                         try {
                           final response = await http.post(
-                            Uri.parse('http://localhost:8000/events/create-event-flutter/'),
+                            Uri.parse('http://beauty-from-the-seoul.vercel.app/events/create-event-flutter/'),
                             headers: <String, String>{
                               'Content-Type': 'application/json; charset=UTF-8',
                             },

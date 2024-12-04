@@ -36,7 +36,7 @@ class CustomerMenu extends StatelessWidget {
             onPressed: () async {
               final request = context.read<CookieRequest>();
               final response = await request.logout(
-                "http://localhost:8000/auth/logout-flutter/",
+                "http://beauty-from-the-seoul.vercel.app/auth/logout-flutter/",
               );
 
               if (response['status']) {

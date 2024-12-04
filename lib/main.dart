@@ -1,9 +1,9 @@
-import 'package:beauty_from_the_seoul_mobile/events/screens/event_list.dart';
+//import 'package:beauty_from_the_seoul_mobile/events/screens/event_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
-//import 'package:beauty_from_the_seoul_mobile/authentication/screens/login.dart';
-import 'package:beauty_from_the_seoul_mobile/catalogue/screens/catalogue.dart';
+import 'package:beauty_from_the_seoul_mobile/authentication/screens/login.dart';
+//import 'package:beauty_from_the_seoul_mobile/catalogue/screens/catalogue.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.blue,
           ).copyWith(secondary: Colors.blue[900]),
         ),
-        home: EventPage(),
+        home: LoginPage(),
       ),
     );
   }
