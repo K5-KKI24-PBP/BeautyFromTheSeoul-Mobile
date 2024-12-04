@@ -33,12 +33,12 @@ class Events {
 }
 
 class Fields {
-    String? name;  // Can be null
-    String? description;  // Can be null
-    DateTime startDate;  // Assuming date fields are always present
-    DateTime endDate;  // Assuming date fields are always present
-    String? location;  // Can be null
-    String? promotionType;  // Can be null
+    String name;
+    String description;
+    DateTime startDate;
+    DateTime endDate;
+    String location;
+    String promotionType;
 
     Fields({
         required this.name,
@@ -50,14 +50,13 @@ class Fields {
     });
 
     factory Fields.fromJson(Map<String, dynamic> json) => Fields(
-      name: json['name'] as String?,
-      description: json['description'] as String?,
-      startDate: json['startDate'] != null ? DateTime.parse(json['startDate']) : DateTime.now(),
-      endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : DateTime.now(),
-      promotionType: json['promotion_type'] as String?,
-      location: json['location'] as String?,
+        name: json["name"],
+        description: json["description"],
+        startDate: DateTime.parse(json["start_date"]),
+        endDate: DateTime.parse(json["end_date"]),
+        location: json["location"],
+        promotionType: json["promotion_type"],
     );
-
 
     Map<String, dynamic> toJson() => {
         "name": name,
@@ -68,4 +67,3 @@ class Fields {
         "promotion_type": promotionType,
     };
 }
-

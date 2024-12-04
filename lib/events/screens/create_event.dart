@@ -27,7 +27,7 @@ class _EventFormState extends State<EventForm> {
       context: context,
       initialDate: _startDate ?? DateTime.now(),
       firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
+      lastDate: DateTime(2200),
     );
     if (picked != null && picked != (isStartDate ? _startDate : _endDate)) {
       setState(() {
