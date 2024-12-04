@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:beauty_from_the_seoul_mobile/authentication/screens/login.dart';
+import 'package:beauty_from_the_seoul_mobile/shared/widgets/navbar.dart';
 
 class UnauthenticatedMenu extends StatelessWidget {
   const UnauthenticatedMenu({super.key});
@@ -18,6 +19,7 @@ class UnauthenticatedMenu extends StatelessWidget {
           style: TextStyle(fontSize: 24),
         ),
       ),
+      bottomNavigationBar: const Material3BottomNav(), // Add Navbar here
     );
   }
 }
@@ -36,7 +38,7 @@ class CustomerMenu extends StatelessWidget {
             onPressed: () async {
               final request = context.read<CookieRequest>();
               final response = await request.logout(
-                "http://localhost:8000/auth/logout-flutter/",
+                "http://beauty-from-the-seoul.vercel.app/auth/logout-flutter/",
               );
 
               if (response['status']) {
@@ -57,6 +59,7 @@ class CustomerMenu extends StatelessWidget {
           style: TextStyle(fontSize: 24),
         ),
       ),
+      bottomNavigationBar: const Material3BottomNav(), // Add Navbar here
     );
   }
 }
@@ -75,7 +78,7 @@ class AdminMenu extends StatelessWidget {
             onPressed: () async {
               final request = context.read<CookieRequest>();
               final response = await request.logout(
-                "http://localhost:8000/auth/logout-flutter/",
+                "http://beauty-from-the-seoul.vercel.app/auth/logout-flutter/",
               );
 
               if (response['status']) {
@@ -96,6 +99,7 @@ class AdminMenu extends StatelessWidget {
           style: TextStyle(fontSize: 24),
         ),
       ),
+      bottomNavigationBar: const Material3BottomNav(), // Add Navbar here
     );
   }
 }
