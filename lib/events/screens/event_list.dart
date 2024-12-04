@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:beauty_from_the_seoul_mobile/events/screens/create_event.dart';
-import 'package:beauty_from_the_seoul_mobile/events/screens/edit.dart';
+import 'package:beauty_from_the_seoul_mobile/events/screens/edit_event.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:beauty_from_the_seoul_mobile/events/models/events.dart';
@@ -79,7 +79,6 @@ class _EventsPageState extends State<EventPage> {
       print('Error fetching filtered events: $e');
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
