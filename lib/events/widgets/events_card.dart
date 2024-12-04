@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class EventCard extends StatelessWidget {
   final String?  name;  // Can be null
@@ -24,6 +25,10 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final DateFormat formatter = DateFormat('yyyy-MM-dd');
+    final String formattedStartDate = formatter.format(startDate);
+    final String formattedEndDate = formatter.format(endDate);
+
     return Card(
       elevation: 2,
       color: const Color.fromARGB(255, 254, 250, 244),
@@ -35,22 +40,22 @@ class EventCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: double.infinity, // Ensures the container fills the card width
+            width: double.infinity,
             decoration: const BoxDecoration(
-              color: Color(0xFF071a58), // Blue background color
+              color: Color(0xFF071a58), 
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(8), 
                 topRight: Radius.circular(8)
               ),
             ),
-            padding: const EdgeInsets.symmetric(vertical: 10), // Adjust padding as needed
+            padding: const EdgeInsets.symmetric(vertical: 10), 
             child: Text(
-              '$name in $location', // Dynamically replace with event name and location
+              '$name in $location', 
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 20, // Adjust font size as needed
+                fontSize: 20, 
                 fontWeight: FontWeight.bold,
-                color: Colors.white, // White text color
+                color: Colors.white, 
               ),
             ),
           ),
@@ -69,7 +74,7 @@ class EventCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  '$startDate - $endDate',
+                  '$formattedStartDate - $formattedEndDate',
                   style: const TextStyle(
                     fontSize: 16,
                     color: Colors.black,
