@@ -17,7 +17,7 @@ class EventPage extends StatefulWidget {
 class _EventsPageState extends State<EventPage> {
   Future<List<Events>> fetchEvents(CookieRequest request) async {
     try {
-      final response = await http.get(Uri.parse('http://localhost:8000/events/event-json/'));
+      final response = await http.get(Uri.parse('http://beauty-from-the-seoul.vercel.app/events/event-json/'));
       if (response.statusCode == 200) {
         // final jsonData = json.decode(response.body);
         // print('Response JSON: $jsonData'); // To inspect the raw JSON data
