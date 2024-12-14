@@ -10,6 +10,7 @@ class EventCard extends StatelessWidget {
   final String? promotionType;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
+  final VoidCallback onRsvp;
 
   const EventCard({
     Key? key,
@@ -21,6 +22,7 @@ class EventCard extends StatelessWidget {
     required this.location,
     required this.onEdit,
     required this.onDelete,
+    required this.onRsvp,
   }) : super(key: key);
 
   @override
@@ -113,6 +115,14 @@ class EventCard extends StatelessWidget {
                         foregroundColor: Colors.black, backgroundColor: const Color.fromARGB(255, 202, 194,249),
                       ),
                       child: const Text('Delete'),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: onRsvp,
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white, backgroundColor: const Color(0xFF071a58),
+                      ),
+                      child: const Text('RSVP'),
                     ),
                   ],
                 ),
