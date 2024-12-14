@@ -18,13 +18,12 @@ class EventPage extends StatefulWidget {
 
 class _EventsPageState extends State<EventPage> {
   List<Events> allEvents = []; // List to hold all events
-  List<dynamic> events = []; // List to hold filtered events
-  int selectedYear = 2024; // Default to current year
-  int selectedMonth = DateTime.now().month; // Default to current month
+  List<Events> events = []; // List to hold filtered events
+  DateTime? _selectedDate;
 
   Future<List<Events>> fetchEvents() async {
     try {
-      final response = await http.get(Uri.parse('http://beauty-from-the-seoul.vercel.app/events/event-json/'));
+      final response = await http.get(Uri.parse('https://beauty-from-the-seoul.vercel.app/events/event-json/'));
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body);
         List<Events> events = data.map((data) => Events.fromJson(data)).toList();
@@ -43,7 +42,7 @@ class _EventsPageState extends State<EventPage> {
 
   Future<void> deleteEvent(String eventId) async {
     try {
-      final response = await http.delete(Uri.parse('http://beauty-from-the-seoul.vercel.app/events/delete-event-flutter/$eventId/'));
+      final response = await http.delete(Uri.parse('https://beauty-from-the-seoul.vercel.app/events/delete-event-flutter/$eventId/'));
 
       print('Status Code: ${response.statusCode}');
       print('Response Body: ${response.body}');
@@ -52,31 +51,66 @@ class _EventsPageState extends State<EventPage> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    fetchFilteredEvents(selectedYear, selectedMonth); // Initial fetch with current date
-  }
-
-  Future<void> fetchFilteredEvents(int year, int month) async {
+  Future<List<Events>> fetchEventsByMonth(int month, int year) async {
     String url = 'http://beauty-from-the-seoul.vercel.app/events/filter-events/?month=$month&year=$year';
-
     try {
-      var response = await http.get(Uri.parse(url));
+      final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
         var responseData = jsonDecode(response.body);
-        String eventsString = responseData['events'];
-        List<dynamic> eventsJson = jsonDecode(eventsString); 
-        List<Events> events = eventsJson.map((data) => Events.fromJson(data)).toList();
-        setState(() {
-          allEvents = events;  // Update the state with the newly fetched events
-        });
+
+        // Debugging: Print the entire response structure
+        print('Response Data: $responseData');
+
+        // Check if the 'events' field is a String, and if so, decode it
+        var eventsData = responseData['events'];
+        if (eventsData is String) {
+          // If it's a string, decode it
+          List<dynamic> eventsJson = jsonDecode(eventsData);
+          List<Events> events = eventsJson.map((data) => Events.fromJson(data)).toList();
+          return events;
+        } else {
+          throw Exception('The events field is not a String. Found: ${eventsData.runtimeType}');
+        }
       } else {
-        throw Exception('Failed to load filtered events');
+        throw Exception('Failed to load filtered events. Status code: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error fetching filtered events: $e');
+      print('Error fetching events: $e');
+      throw Exception('Error fetching events: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Initially load all events
+    fetchEvents().then((fetchedEvents) {
+      setState(() {
+        allEvents = fetchedEvents;
+        events = fetchedEvents; // Initially display all events
+      });
+    });
+  }
+
+  void _selectDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2024),
+      lastDate: DateTime(2030),
+    );
+
+    if (pickedDate != null) {
+      setState(() {
+        _selectedDate = pickedDate;
+      });
+      // Fetch events for the selected month and year
+      fetchEventsByMonth(pickedDate.month, pickedDate.year).then((fetchedEvents) {
+        setState(() {
+          events = fetchedEvents; // Update displayed events with filtered data
+        });
+      });
     }
   }
 
@@ -104,39 +138,9 @@ class _EventsPageState extends State<EventPage> {
       ),
       body: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              DropdownButton<int>(
-                value: selectedYear,
-                items: List.generate(7, (index) {
-                  int year = 2024 + index; 
-                  return DropdownMenuItem(value: year, child: Text(year.toString()));
-                }),
-                onChanged: (int? newValue) {
-                  if (newValue != null) {
-                    setState(() {
-                      selectedYear = newValue;
-                      fetchFilteredEvents(selectedYear, selectedMonth);
-                    });
-                  }
-                },
-              ),
-              DropdownButton<int>(
-                value: selectedMonth,
-                items: List.generate(12, (index) {
-                  return DropdownMenuItem(value: index + 1, child: Text((index + 1).toString()));
-                }),
-                onChanged: (int? newValue) {
-                  if (newValue != null) {
-                    setState(() {
-                      selectedMonth = newValue;
-                      fetchFilteredEvents(selectedYear, selectedMonth);
-                    });
-                  }
-                },
-              ),
-            ],
+          OutlinedButton(
+            onPressed: () => _selectDate(context), // Open the date picker
+            child: const Text('Filter by Month'),
           ),
           IconButton(
             icon: const Icon(Icons.add),
@@ -150,7 +154,7 @@ class _EventsPageState extends State<EventPage> {
           ),
           Expanded(
             child: FutureBuilder<List<Events>>(
-              future: fetchEvents(),
+              future: fetchEvents(),  // Load all events initially
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -158,11 +162,11 @@ class _EventsPageState extends State<EventPage> {
                 if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 }
-                if (snapshot.hasData) {
+                if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                   return ListView.builder(
-                    itemCount: allEvents.length,
+                    itemCount: events.length,
                     itemBuilder: (context, index) {
-                      final event = allEvents[index];
+                      final event = events[index];
                       return EventCard(
                         name: event.fields.name,
                         description: event.fields.description,
@@ -170,6 +174,7 @@ class _EventsPageState extends State<EventPage> {
                         endDate: event.fields.endDate,
                         promotionType: event.fields.promotionType,
                         location: event.fields.location,
+
                         onEdit: () {
                           Navigator.push(
                           context,
@@ -178,6 +183,9 @@ class _EventsPageState extends State<EventPage> {
                         },
                         onDelete: () {
                           deleteEvent(event.pk);
+                        },
+                        onRsvp: () {
+                          print('RSVP for event ${event.pk}');
                         },
                       );
                     },
