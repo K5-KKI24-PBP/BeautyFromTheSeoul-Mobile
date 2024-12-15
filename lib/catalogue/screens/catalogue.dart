@@ -3,7 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:beauty_from_the_seoul_mobile/catalogue/models/products.dart';
 import 'package:beauty_from_the_seoul_mobile/catalogue/widgets/product_card.dart';
 import 'package:beauty_from_the_seoul_mobile/shared/widgets/navbar.dart';
-import 'package:shared_preferences/shared_preferences.dart' show SharedPreferences;
+import 'package:shared_preferences/shared_preferences.dart'
+    show SharedPreferences;
 
 class CataloguePage extends StatefulWidget {
   final bool isStaff;
@@ -39,7 +40,8 @@ class _CataloguePageState extends State<CataloguePage> {
   Future<void> fetchProducts() async {
     try {
       final response = await http.get(
-        Uri.parse('https://beauty-from-the-seoul.vercel.app/catalogue/get_product/'),
+        Uri.parse(
+            'https://beauty-from-the-seoul.vercel.app/catalogue/get_product/'),
       );
 
       if (response.statusCode == 200) {
