@@ -2,24 +2,76 @@ import 'dart:convert';
 import 'package:beauty_from_the_seoul_mobile/catalogue/models/review.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
-class ProductReviews extends StatefulWidget {
-  final String productId; // Change from int to String
-
-  const ProductReviews({Key? key, required this.productId}) : super(key: key);
-
-  @override
-  State<ProductReviews> createState() => _ProductReviewsState();
+class ReviewService {
+  static Future<bool> deleteReview(int reviewId) async {
+    try {
+      print('Attempting to delete review with ID: $reviewId');
+      final response = await http.delete(
+        Uri.parse('https://beauty-from-the-seoul.vercel.app/catalogue/delete_review_flutter/$reviewId/'),
+        headers: {'Content-Type': 'application/json'},
+      );
+      print('Delete response status: ${response.statusCode}');
+      return response.statusCode == 204;
+    } catch (e) {
+      print('Error deleting review: $e');
+      return false;
+    }
+  }
 }
 
-class _ProductReviewsState extends State<ProductReviews> {
+class ProductReviews extends StatefulWidget {
+  final String productId;
+  final Function(double) onRatingUpdate;  
+
+  const ProductReviews({
+    Key? key, 
+    required this.productId,
+    required this.onRatingUpdate,  
+  }) : super(key: key);
+
+  @override
+  State<ProductReviews> createState() => ProductReviewsState();  
+}
+
+class ProductReviewsState extends State<ProductReviews> {  
   List<Review> reviews = [];
   bool isLoading = true;
+  bool isStaff = false;  
+  bool hasUserReviewed = false;  
+  int? currentUserId;  
 
   @override
   void initState() {
     super.initState();
+    _checkStaffStatus();
     _fetchReviews();
+  }
+
+  Future<void> _checkStaffStatus() async { 
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isStaff = prefs.getBool('isStaff') ?? false;
+      currentUserId = prefs.getInt('userId'); 
+    });
+  }
+
+  void _checkUserReview() {
+    if (currentUserId != null) {
+      setState(() {
+        hasUserReviewed = reviews.any((review) => 
+          review.fields.user == currentUserId && 
+          review.fields.product == widget.productId
+        );
+      });
+    }
+  }
+
+  void _updateAverageRating() {
+    double avgRating = _calculateAverageRating();
+    widget.onRatingUpdate(avgRating);
   }
 
   Future<void> _fetchReviews() async {
@@ -37,6 +89,8 @@ class _ProductReviewsState extends State<ProductReviews> {
           reviews = allReviews
               .where((review) => review.fields.product == widget.productId)
               .toList();
+          _checkUserReview();  
+          _updateAverageRating();
         });
       }
     } catch (e) {
@@ -50,25 +104,79 @@ class _ProductReviewsState extends State<ProductReviews> {
 
   Future<void> _submitReview(double rating, String comment) async {
     try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getInt('userId');
+      final username = prefs.getString('username');  
+
+      if (userId == null || username == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please login to submit a review')),
+        );
+        return;
+      }
+
       final response = await http.post(
-        Uri.parse(
-            'https://beauty-from-the-seoul.vercel.app/catalogue/add_review_flutter/'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        Uri.parse('https://beauty-from-the-seoul.vercel.app/catalogue/review_flutter/${widget.productId}/'),
+        headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'product': widget.productId, // Pass productId as String
+          'user': userId,
+          'username': username,  
           'rating': rating.toInt(),
           'comment': comment,
         }),
       );
+
+      final responseData = jsonDecode(response.body);
+      final message = responseData['message'] ?? 'Unknown error occurred';
+
       if (response.statusCode == 201) {
-        _fetchReviews(); // Refresh reviews on successful submission
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message), backgroundColor: const Color(0xFF071a58)),
+        );
+        await _fetchReviews();  
+        _updateAverageRating(); 
       } else {
-        print('Failed to submit review');
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message), backgroundColor: const Color(0xFFAE0000)),
+        );
       }
     } catch (e) {
-      print('Error submitting review: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e'), backgroundColor: const Color(0xFFAE0000)),
+      );
+    }
+  }
+
+  Future<void> _handleDeleteReview(Review review) async {
+    bool confirmed = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Review'),
+        content: const Text('Are you sure you want to delete this review?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Delete')),
+        ],
+      ),
+    ) ?? false;
+
+    if (confirmed) {
+      final success = await ReviewService.deleteReview(review.pk);
+      if (success) {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Review deleted successfully')),
+        );
+        await _fetchReviews(); 
+        _updateAverageRating();  
+      } else {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to delete review'), backgroundColor: Colors.red),
+        );
+      }
     }
   }
 
@@ -79,56 +187,63 @@ class _ProductReviewsState extends State<ProductReviews> {
   }
 
   void _showReviewDialog() {
+    double rating = 0;
+    final commentController = TextEditingController();
+    
     showDialog(
       context: context,
-      builder: (context) {
-        double rating = 0;
-        String comment = '';
-        return AlertDialog(
-          title: const Text('Write a Review'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                decoration: const InputDecoration(labelText: 'Comment'),
-                onChanged: (value) => comment = value,
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(5, (index) {
-                  return IconButton(
-                    icon: Icon(
-                      index < rating ? Icons.star : Icons.star_border,
-                      color: Colors.amber,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        rating = index + 1.0;
-                      });
-                    },
-                  );
-                }),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+      builder: (context) => AlertDialog(
+        title: const Text('Write a Review'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            RatingBar.builder(
+              initialRating: 0,
+              minRating: 1,
+              direction: Axis.horizontal,
+              allowHalfRating: false,
+              itemCount: 5,
+              itemSize: 30,
+              itemBuilder: (context, _) => const Icon(Icons.star, color: Colors.amber),
+              onRatingUpdate: (value) => rating = value,
             ),
-            ElevatedButton(
-              onPressed: () {
-                if (rating > 0 && comment.isNotEmpty) {
-                  _submitReview(rating, comment);
-                  Navigator.pop(context);
-                }
-              },
-              child: const Text('Submit'),
+            const SizedBox(height: 16),
+            TextField(
+              controller: commentController,
+              decoration: const InputDecoration(
+                hintText: 'Write your review...',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 3,
             ),
           ],
-        );
-      },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              if (rating == 0) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Please rate the product')),
+                );
+                return;
+              }
+              if (commentController.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Please write a comment')),
+                );
+                return;
+              }
+              _submitReview(rating, commentController.text);
+              Navigator.pop(context);
+            },
+            child: const Text('Submit'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -150,19 +265,49 @@ class _ProductReviewsState extends State<ProductReviews> {
           else
             ...reviews.map(
               (review) => ListTile(
-                leading: Icon(Icons.star, color: Colors.amber),
-                title: Text('${review.fields.rating}'),
-                subtitle: Text(review.fields.comment),
+                leading: const Icon(
+                  Icons.person, 
+                  color: Color(0xFF071a58)
+                ),
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${review.fields.username}',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 4),
+                    RatingBarIndicator(
+                      rating: review.fields.rating.toDouble(),
+                      itemBuilder: (context, _) => const Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                      ),
+                      itemCount: 5,
+                      itemSize: 20.0,
+                      direction: Axis.horizontal,
+                    ),
+                  ],
+                ),
+                subtitle: Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(review.fields.comment),
+                ),
+                trailing: isStaff ? IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () => _handleDeleteReview(review),
+                ) : null,
               ),
             ),
           const SizedBox(height: 16),
         ],
-        Center(
-          child: ElevatedButton(
-            onPressed: _showReviewDialog,
-            child: const Text('Write a Review'),
+        if (!hasUserReviewed) 
+          Center(
+            child: ElevatedButton(
+              onPressed: _showReviewDialog,
+              child: const Text('Write a Review'),
+            ),
           ),
-        ),
       ],
     );
   }

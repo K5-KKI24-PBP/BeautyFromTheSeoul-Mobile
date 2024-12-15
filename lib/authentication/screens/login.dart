@@ -73,13 +73,16 @@ class _LoginPageState extends State<LoginPage> {
       if (response['status']) {
         final userProfile = UserProfile.fromJson(response['user']);
         
-        // Store both role and ID
+        // Store both role and isStaff boolean
         await prefs.setString('userRole', userProfile.role);
-        await prefs.setInt('userId', userProfile.id);  // Add this line
-        await prefs.setString('username', userProfile.username);  // Add this line
+        await prefs.setInt('userId', userProfile.id);
+        await prefs.setString('username', userProfile.username);
+        await prefs.setBool('isStaff', userProfile.role == 'admin'); // Add this line to store isStaff
+        
         print('Stored user role: ${userProfile.role}');
-        print('Stored user ID: ${userProfile.id}');  // Debug print
-        print('Stored username: ${userProfile.username}');  // Debug print
+        print('Stored user ID: ${userProfile.id}');
+        print('Stored username: ${userProfile.username}');
+        print('Stored isStaff: ${userProfile.role == 'admin'}');
         
         if (!mounted) return;
 
@@ -128,7 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                 const Icon(
                   Icons.account_circle,
                   size: 100,
-                  color: Colors.blue,
+                  color: Color(0xFF071a58),
                 ),
                 const SizedBox(height: 40),
                 TextFormField(
@@ -166,9 +169,13 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: _isLoading ? null : () => _login(context),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
+                    backgroundColor: const Color(0xFF071a58),
+                    foregroundColor: Colors.white,
                   ),
                   child: _isLoading
-                      ? const CircularProgressIndicator(strokeWidth: 2)
+                      ? const CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        )
                       : const Text('Login', style: TextStyle(fontSize: 16)),
                 ),
                 const SizedBox(height: 16),
