@@ -3,6 +3,7 @@ import 'package:beauty_from_the_seoul_mobile/authentication/screens/register.dar
 import 'package:beauty_from_the_seoul_mobile/main/screens/menu.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart' show SharedPreferences;
 
 // Simplified UserProfile model
 class UserProfile {
@@ -55,6 +56,7 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       final request = context.read<CookieRequest>();
+      final prefs = await SharedPreferences.getInstance();  // Add this
       
       print('Attempting login...');
       
@@ -70,6 +72,15 @@ class _LoginPageState extends State<LoginPage> {
 
       if (response['status']) {
         final userProfile = UserProfile.fromJson(response['user']);
+        
+        // Store both role and ID
+        await prefs.setString('userRole', userProfile.role);
+        await prefs.setInt('userId', userProfile.id);  // Add this line
+        await prefs.setString('username', userProfile.username);  // Add this line
+        print('Stored user role: ${userProfile.role}');
+        print('Stored user ID: ${userProfile.id}');  // Debug print
+        print('Stored username: ${userProfile.username}');  // Debug print
+        
         if (!mounted) return;
 
         Navigator.pushReplacement(
