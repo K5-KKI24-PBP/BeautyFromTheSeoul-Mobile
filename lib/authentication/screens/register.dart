@@ -84,7 +84,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 const Icon(
                   Icons.person_add,
                   size: 100,
-                  color: Colors.blue,
+                  color: Color(0xFF071a58),
                 ),
                 const SizedBox(height: 40),
                 TextFormField(
@@ -186,6 +186,8 @@ class _RegisterPageState extends State<RegisterPage> {
                   onPressed: _isLoading ? null : _register,
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
+                    backgroundColor: const Color(0xFF071a58),
+                    foregroundColor: Colors.white,
                   ),
                   child: _isLoading
                       ? const SizedBox(
@@ -193,6 +195,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           width: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         )
                       : const Text(

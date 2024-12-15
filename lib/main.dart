@@ -1,9 +1,8 @@
-//import 'package:beauty_from_the_seoul_mobile/events/screens/event_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
-import 'package:beauty_from_the_seoul_mobile/authentication/screens/login.dart';
-//import 'package:beauty_from_the_seoul_mobile/catalogue/screens/catalogue.dart';
+//import 'package:beauty_from_the_seoul_mobile/authentication/screens/login.dart';
+import 'package:beauty_from_the_seoul_mobile/authentication/screens/welcome.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,11 +22,17 @@ class MyApp extends StatelessWidget {
         title: 'Beauty From The Seoul',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSwatch(
-            primarySwatch: Colors.blue,
-          ).copyWith(secondary: Colors.blue[900]),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF071a58),
+            primary: const Color(0xFF071a58),
+          ),
+          navigationBarTheme: NavigationBarThemeData(
+            labelTextStyle: MaterialStateProperty.all(
+              const TextStyle(color: Colors.white),
+            ),
+          ),
         ),
-        home: LoginPage(),
+        home: WelcomePage(),
       ),
     );
   }
