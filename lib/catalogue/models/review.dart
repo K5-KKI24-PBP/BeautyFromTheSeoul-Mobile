@@ -11,7 +11,7 @@ String reviewToJson(List<Review> data) => json.encode(List<dynamic>.from(data.ma
 class Review {
     String model;
     int pk;
-    Fields fields;
+    ReviewFields fields;
 
     Review({
         required this.model,
@@ -22,7 +22,7 @@ class Review {
     factory Review.fromJson(Map<String, dynamic> json) => Review(
         model: json["model"],
         pk: json["pk"],
-        fields: Fields.fromJson(json["fields"]),
+        fields: ReviewFields.fromJson(json["fields"]),
     );
 
     Map<String, dynamic> toJson() => {
@@ -32,32 +32,42 @@ class Review {
     };
 }
 
-class Fields {
+class ReviewFields {
     String product;
     int user;
+    String username;
     int rating;
     String comment;
     DateTime createdAt;
 
-    Fields({
+    ReviewFields({
         required this.product,
         required this.user,
+        required this.username,
         required this.rating,
         required this.comment,
         required this.createdAt,
     });
 
-    factory Fields.fromJson(Map<String, dynamic> json) => Fields(
-        product: json["product"],
-        user: json["user"],
-        rating: json["rating"],
-        comment: json["comment"],
-        createdAt: DateTime.parse(json["created_at"]),
-    );
+    factory ReviewFields.fromJson(Map<String, dynamic> json) {
+        print("Parsing review fields: $json"); // Debug print
+        final username = json["username"];
+        print("Username from JSON: $username"); // Debug print
+        
+        return ReviewFields(
+            product: json["product"],
+            user: json["user"],
+            username: username ?? "Unknown User",  // Use null-safe operator
+            rating: json["rating"],
+            comment: json["comment"],
+            createdAt: DateTime.parse(json["created_at"]),
+        );
+    }
 
     Map<String, dynamic> toJson() => {
         "product": product,
         "user": user,
+        "username": username,
         "rating": rating,
         "comment": comment,
         "created_at": createdAt.toIso8601String(),

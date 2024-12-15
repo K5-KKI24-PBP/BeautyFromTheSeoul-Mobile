@@ -4,17 +4,50 @@ import 'dart:convert';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:beauty_from_the_seoul_mobile/catalogue/models/products.dart';
 import 'package:beauty_from_the_seoul_mobile/catalogue/models/review.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class ProductCard extends StatelessWidget {
+class ReviewService {
+  static Future<bool> deleteReview(int reviewId) async {
+    try {
+      print('Attempting to delete review with ID: $reviewId'); // Debug print
+      final response = await http.delete(
+        Uri.parse('https://beauty-from-the-seoul.vercel.app/catalogue/delete_review_flutter/$reviewId/'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+      print('Delete response status: ${response.statusCode}'); 
+      print('Delete response body: ${response.body}');  
+      return response.statusCode == 204;
+    } catch (e) {
+      print('Error deleting review: $e');
+      return false;
+    }
+  }
+}
+
+class ProductCard extends StatefulWidget {
   final Products product;
-  final bool isAdmin;
-  List<Review> reviews = [];
+  final bool isStaff;
 
-  ProductCard({
+  const ProductCard({
     Key? key,
     required this.product,
-    required this.isAdmin,
+    required this.isStaff,
   }) : super(key: key);
+
+  @override
+  State<ProductCard> createState() => _ProductCardState();
+}
+
+class _ProductCardState extends State<ProductCard> {
+  List<Review> reviews = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchReviews();
+  }
 
   Future<void> _fetchReviews() async {
     try {
@@ -23,7 +56,9 @@ class ProductCard extends StatelessWidget {
       );
       if (response.statusCode == 200) {
         final List<Review> allReviews = reviewFromJson(response.body);
-        reviews = allReviews.where((review) => review.fields.product == product.pk).toList();
+        setState(() {
+          reviews = allReviews.where((review) => review.fields.product == widget.product.pk).toList();
+        });
       }
     } catch (e) {
       print('Error fetching reviews: $e');
@@ -43,7 +78,7 @@ class ProductCard extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Review ${product.fields.productName}'),
+        title: Text('Review ${widget.product.fields.productName}'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -94,12 +129,24 @@ class ProductCard extends StatelessWidget {
               }
 
               try {
-                final productId = product.pk;
+                final prefs = await SharedPreferences.getInstance();
+                final userId = prefs.getInt('userId');  // Get stored user ID
 
+                if (userId == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('User ID not found. Please login again.'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return;
+                }
+
+                final productId = widget.product.pk;
                 final response = await http.post(
-                  Uri.parse('http://beauty-from-the-seoul.vercel.app/catalogue/review_flutter/$productId/'),
+                  Uri.parse('https://beauty-from-the-seoul.vercel.app/catalogue/review_flutter/$productId/'),
                   body: jsonEncode({
-                    'user': 1,
+                    'user': userId, 
                     'rating': rating.toInt(),
                     'comment': commentController.text,
                   }),
@@ -154,7 +201,7 @@ class ProductCard extends StatelessWidget {
             child: GestureDetector(
               onTap: () => _showProductDetails(context),
               child: Image.network(
-                product.fields.image,
+                widget.product.fields.image,
                 fit: BoxFit.contain,
                 errorBuilder: (context, error, stackTrace) {
                   return const Center(child: Icon(Icons.error));
@@ -170,7 +217,7 @@ class ProductCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    product.fields.productName,
+                    widget.product.fields.productName,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
@@ -179,7 +226,7 @@ class ProductCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    product.fields.productBrand,
+                    widget.product.fields.productBrand,
                     style: const TextStyle(
                       color: Colors.grey,
                       fontSize: 12,
@@ -190,7 +237,7 @@ class ProductCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '${product.fields.price}',
+                        '${widget.product.fields.price}',
                         style: const TextStyle(
                           color: Colors.red,
                           fontWeight: FontWeight.bold,
@@ -213,25 +260,6 @@ class ProductCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  if (isAdmin)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.edit),
-                          onPressed: () {
-                            // Implement edit
-                          },
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.delete),
-                          color: Colors.red,
-                          onPressed: () {
-                            // Implement delete
-                          },
-                        ),
-                      ],
-                    ),
                 ],
               ),
             ),
@@ -246,6 +274,9 @@ class ProductCard extends StatelessWidget {
     double avgRating = _calculateAverageRating();
     
     if (!context.mounted) return;
+
+    final prefs = await SharedPreferences.getInstance();
+    final currentUsername = prefs.getString('username') ?? '';
   
     showModalBottomSheet(
       context: context,
@@ -272,25 +303,19 @@ class ProductCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Rest of your existing product details content
+                      // Product details section
                       Text(
-                        product.fields.productName,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        widget.product.fields.productName,
+                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
-                      Text(product.fields.productBrand),
+                      Text(widget.product.fields.productBrand),
                       const SizedBox(height: 8),
                       Row(
                         children: [
                           RatingBarIndicator(
                             rating: avgRating,
-                            itemBuilder: (context, _) => const Icon(
-                              Icons.star,
-                              color: Colors.amber,
-                            ),
+                            itemBuilder: (context, _) => const Icon(Icons.star, color: Colors.amber),
                             itemCount: 5,
                             itemSize: 20.0,
                           ),
@@ -299,62 +324,75 @@ class ProductCard extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      Text(product.fields.productDescription),
+                      Text(widget.product.fields.productDescription),
                       const SizedBox(height: 8),
                       Text(
-                        '${product.fields.price}',
-                        style: const TextStyle(
-                          color: Colors.red,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        '${widget.product.fields.price}',
+                        style: const TextStyle(color: Colors.red, fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 16),
                       const Text(
                         'Reviews',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
+                      // Reviews section
                       ...reviews.map((review) => Card(
                         margin: const EdgeInsets.only(bottom: 8),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
+                        child: ListTile(
+                          title: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
-                                    '${review.fields.user}:',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          '${review.fields.username}:',  // Add username here
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Row(
+                                          children: [
+                                            RatingBarIndicator(
+                                              rating: review.fields.rating.toDouble(),
+                                              itemBuilder: (context, _) => 
+                                                  const Icon(Icons.star, color: Colors.amber),
+                                              itemCount: 5,
+                                              itemSize: 16.0,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              review.fields.createdAt.toString().split(' ')[0],
+                                              style: const TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  const SizedBox(width: 8),
-                                  RatingBarIndicator(
-                                    rating: review.fields.rating.toDouble(),
-                                    itemBuilder: (context, _) => const Icon(
-                                      Icons.star,
-                                      color: Colors.amber,
+                                  if (widget.isStaff) ...[
+                                    IconButton(
+                                      icon: const Icon(Icons.delete, color: Colors.red),
+                                      onPressed: () => _handleDeleteReview(context, review),
                                     ),
-                                    itemCount: 5,
-                                    itemSize: 16.0,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    review.fields.createdAt.toString().split(' ')[0],
-                                    style: const TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 12,
-                                    ),
-                                  ),
+                                  ],
                                 ],
                               ),
-                              const SizedBox(height: 4),
-                              Text(review.fields.comment),
+                              const SizedBox(height: 8),
+                              Text(
+                                review.fields.comment,
+                                style: const TextStyle(fontSize: 14),
+                              ),
                             ],
                           ),
                         ),
@@ -368,5 +406,66 @@ class ProductCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _handleDeleteReview(BuildContext context, Review review) async {
+    print('Delete button pressed for review: ${review.pk}');
+    
+    bool confirmed = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Review'),
+        content: const Text('Are you sure you want to delete this review?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    ) ?? false;
+
+    if (confirmed) {
+      try {
+        final success = await ReviewService.deleteReview(review.pk);
+        if (!context.mounted) return;
+        
+        if (success) {
+          // Close the bottom sheet first
+          Navigator.pop(context);
+          
+          // Show success message
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Review deleted successfully')),
+          );
+          
+          // Fetch updated reviews and refresh UI
+          await _fetchReviews();
+          
+          // Show product details again with updated reviews
+          _showProductDetails(context);
+          
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to delete review'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } catch (e) {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 }

@@ -3,10 +3,11 @@ import 'package:http/http.dart' as http;
 import 'package:beauty_from_the_seoul_mobile/catalogue/models/products.dart';
 import 'package:beauty_from_the_seoul_mobile/catalogue/widgets/product_card.dart';
 import 'package:beauty_from_the_seoul_mobile/shared/widgets/navbar.dart';
+import 'package:shared_preferences/shared_preferences.dart' show SharedPreferences;
 
 class CataloguePage extends StatefulWidget {
-  final bool isAdmin;
-  const CataloguePage({Key? key, this.isAdmin = false}) : super(key: key);
+  final bool isStaff;
+  const CataloguePage({Key? key, this.isStaff = false}) : super(key: key);
 
   @override
   _CataloguePageState createState() => _CataloguePageState();
@@ -16,11 +17,23 @@ class _CataloguePageState extends State<CataloguePage> {
   List<Products> products = [];
   bool isLoading = true;
   String? error;
+  bool isStaff = false;
 
   @override
   void initState() {
     super.initState();
+    _checkUserRole();
     fetchProducts();
+  }
+
+  Future<void> _checkUserRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userRole = prefs.getString('userRole') ?? '';
+    setState(() {
+      isStaff = userRole == 'admin';
+    });
+    print('User role from SharedPreferences: $userRole');
+    print('isStaff value: $isStaff');
   }
 
   Future<void> fetchProducts() async {
@@ -60,7 +73,7 @@ class _CataloguePageState extends State<CataloguePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Beauty from the Seoul'),
+        title: const Text('Browse Our Extensive Catalogue!'),
         centerTitle: true,
       ),
       body: GridView.builder(
@@ -76,7 +89,7 @@ class _CataloguePageState extends State<CataloguePage> {
           final product = products[index];
           return ProductCard(
             product: product,
-            isAdmin: widget.isAdmin,
+            isStaff: isStaff,
           );
         },
       ),
