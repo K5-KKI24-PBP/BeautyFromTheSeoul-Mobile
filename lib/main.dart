@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        home: WelcomePage(),
+        home: const WelcomePage(),
       ),
     );
   }
