@@ -5,11 +5,15 @@ import 'product_detail.dart';
 class ProductCard extends StatelessWidget {
   final Products product;
   final bool isStaff;
+  final bool isFavorite;  // Track if the product is a favorite
+  final VoidCallback onFavoriteToggle;  // Callback to handle favorite toggle
 
   const ProductCard({
     super.key,
     required this.product,
     required this.isStaff,
+    required this.isFavorite,
+    required this.onFavoriteToggle,
   });
 
   @override
@@ -68,6 +72,17 @@ class ProductCard extends StatelessWidget {
                       style: const TextStyle(
                         color: Colors.red,
                         fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    // Heart icon for favorite toggle
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
+                        icon: Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: isFavorite ? Colors.red : Colors.grey,
+                        ),
+                        onPressed: onFavoriteToggle,  // Trigger the callback when pressed
                       ),
                     ),
                   ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:beauty_from_the_seoul_mobile/main/screens/menu.dart';
 import 'package:beauty_from_the_seoul_mobile/catalogue/screens/catalogue.dart';
 import 'package:beauty_from_the_seoul_mobile/events/screens/event_list.dart';
+import 'package:beauty_from_the_seoul_mobile/favorites/screens/favorites.dart';
 
 class Material3BottomNav extends StatefulWidget {
   final bool showNavBar; // New parameter to control visibility
@@ -19,6 +20,7 @@ class _Material3BottomNavState extends State<Material3BottomNav> {
     const CustomerMenu(),
     const CataloguePage(),
     const EventPage(),
+    const FavoritePage(),
   ];
 
   @override
@@ -36,6 +38,8 @@ class _Material3BottomNavState extends State<Material3BottomNav> {
         setState(() => _selectedIndex = 1);
       } else if (currentRoute.contains('event')) {
         setState(() => _selectedIndex = 2);
+      } else if (currentRoute.contains('favorites')) {
+        setState(() => _selectedIndex = 3);
       } else {
         setState(() => _selectedIndex = 0);
       }
@@ -67,7 +71,9 @@ class _Material3BottomNavState extends State<Material3BottomNav> {
                 ? '/catalogue' 
                 : index == 2 
                   ? '/events' 
-                  : '/home'
+                  : index == 3
+                    ? '/favorites'
+                    : '/home',
             ),
           ),
         );
@@ -87,6 +93,11 @@ class _Material3BottomNavState extends State<Material3BottomNav> {
           icon: Icon(Icons.event_outlined, color: Colors.white),
           selectedIcon: Icon(Icons.event, color: Color(0xFF071a58)),
           label: 'Events',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.favorite_border, color: Colors.white), // Unselected icon
+          selectedIcon: Icon(Icons.favorite, color: Color(0xFF071a58)), // Selected icon
+          label: 'Favorites',
         ),
       ],
       surfaceTintColor: Colors.transparent,
