@@ -5,6 +5,7 @@ import 'package:beauty_from_the_seoul_mobile/catalogue/widgets/product_card.dart
 import 'package:beauty_from_the_seoul_mobile/shared/widgets/navbar.dart';
 import 'package:shared_preferences/shared_preferences.dart'
     show SharedPreferences;
+import 'dart:convert';
 
 class CataloguePage extends StatefulWidget {
   final bool isStaff;
@@ -19,6 +20,7 @@ class _CataloguePageState extends State<CataloguePage> {
   bool isLoading = true;
   String? error;
   bool isStaff = false;
+  List<String> favoriteProductIds = [];
 
   @override
   void initState() {
@@ -63,6 +65,42 @@ class _CataloguePageState extends State<CataloguePage> {
     }
   }
 
+  Future<void> toggleFavorite(String productId) async {
+    final url = Uri.parse('http://localhost:8000/favorites/add_favorites_flutter/');
+
+    try { 
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getInt('userId');
+      final username = prefs.getString('username'); 
+      final response = await http.post(
+          url,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'product_id': productId,
+            'user_id' : userId,
+            'username' : username,
+          }),
+        );
+
+        if (response.statusCode == 200) {
+          final responseData = jsonDecode(response.body);
+          setState(() {
+            if (responseData['status'] == 'added') {
+              favoriteProductIds.add(productId);
+            } else if (responseData['status'] == 'removed') {
+              favoriteProductIds.remove(productId);
+            }
+          });
+        } else {
+          print('Failed to toggle favorite: ${response.statusCode}');
+        }
+      } catch (e) {
+        print('Error occurred while toggling favorite: $e');
+      }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
@@ -92,6 +130,10 @@ class _CataloguePageState extends State<CataloguePage> {
           return ProductCard(
             product: product,
             isStaff: isStaff,
+            isFavorite: favoriteProductIds.contains(product.pk),
+            onFavoriteToggle: () {
+              toggleFavorite(product.pk); // This should toggle the favorite status
+            },
           );
         },
       ),
