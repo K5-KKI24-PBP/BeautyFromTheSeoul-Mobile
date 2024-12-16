@@ -66,7 +66,7 @@ class _CataloguePageState extends State<CataloguePage> {
 
   /// Fetch favorite product IDs for the current user
   Future<void> fetchFavoriteProducts() async {
-    final url = Uri.parse('http://localhost:8000/favorites/get_favorites/');
+    final url = Uri.parse('https://beauty-from-the-seoul.vercel.app/favorites/get_favorites/');
     try {
       final prefs = await SharedPreferences.getInstance();
       final userId = prefs.getInt('userId');
@@ -103,7 +103,7 @@ class _CataloguePageState extends State<CataloguePage> {
   }
 
   Future<void> toggleFavorite(String productId) async {
-    final url = Uri.parse('http://localhost:8000/favorites/add_favorites_flutter/');
+    final url = Uri.parse('https://beauty-from-the-seoul.vercel.app/favorites/add_favorites_flutter/');
 
     try { 
       final prefs = await SharedPreferences.getInstance();
@@ -140,14 +140,6 @@ class _CataloguePageState extends State<CataloguePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (error != null) {
-      return Center(child: Text(error!));
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Browse Our Extensive Catalogue!'),
@@ -172,27 +164,31 @@ class _CataloguePageState extends State<CataloguePage> {
             ),
         ],
       ),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(8),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.7,
-          mainAxisSpacing: 8,
-          crossAxisSpacing: 8,
-        ),
-        itemCount: products.length,
-        itemBuilder: (context, index) {
-          final product = products[index];
-          return ProductCard(
-            product: product,
-            isStaff: isStaff,
-            isFavorite: favoriteProductIds.contains(product.pk),
-            onFavoriteToggle: () {
-              toggleFavorite(product.pk); // Toggle favorite status
-            },
-          );
-        },
-      ),
+      body: isLoading 
+          ? const Center(child: CircularProgressIndicator())
+          : error != null
+              ? Center(child: Text(error!))
+              : GridView.builder(
+                  padding: const EdgeInsets.all(8),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.7,
+                    mainAxisSpacing: 8,
+                    crossAxisSpacing: 8,
+                  ),
+                  itemCount: products.length,
+                  itemBuilder: (context, index) {
+                    final product = products[index];
+                    return ProductCard(
+                      product: product,
+                      isStaff: isStaff,
+                      isFavorite: favoriteProductIds.contains(product.pk),
+                      onFavoriteToggle: () {
+                        toggleFavorite(product.pk); // Toggle favorite status
+                      },
+                    );
+                  },
+                ),
       bottomNavigationBar: const Material3BottomNav(),
       // Add a FAB for adding products (optional)
       floatingActionButton: isStaff
