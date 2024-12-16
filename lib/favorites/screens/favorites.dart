@@ -14,7 +14,7 @@ class FavoritePage extends StatefulWidget {
 class _FavoritePageState extends State<FavoritePage> {
   List<Map<String, dynamic>> favorites = [];
   bool isLoading = true;
-  List<String> categories = ['Favorites', 'Eye Treatment', 'Mask', 'Moisturizer'];
+  List<String> categories = ['Favorites'];
 
   @override
   void initState() {
@@ -41,11 +41,30 @@ class _FavoritePageState extends State<FavoritePage> {
       );
 
       if (response.statusCode == 200) {
-        final List<dynamic> fetchedFavorites = jsonDecode(response.body);
-        setState(() {
-          favorites = fetchedFavorites.map((item) => Map<String, dynamic>.from(item)).toList();
-          isLoading = false;
-        });
+        // Decode the response as a map
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+
+        // Check if 'favorite_products' exists in the response
+        if (responseData.containsKey('favorite_products')) {
+          final List<dynamic> fetchedFavorites = responseData['favorite_products'];
+          setState(() {
+            // Map the fetched favorites to the favorites list
+            favorites = fetchedFavorites.map((item) => Map<String, dynamic>.from(item)).toList();
+            print(favorites);
+
+            // Extract categories based on the skincare_type from the products
+            // 'Favorites' is already the first category, so we add unique skincare types for other categories
+            categories = ['Favorites', ...favorites
+                .map((product) => product['type'] as String)
+                .toSet()
+                .toList()];
+                
+            isLoading = false;
+          });
+        } else {
+          print('Favorite products not found in response');
+          setState(() => isLoading = false);
+        }
       } else {
         print('Failed to fetch favorites: ${response.body}');
         setState(() => isLoading = false);
@@ -58,17 +77,27 @@ class _FavoritePageState extends State<FavoritePage> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobileView = MediaQuery.of(context).size.width < 600; // Adjust the width threshold for mobile/tablet
+
     return DefaultTabController(
       length: categories.length,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('My Favorite Products'),
-          bottom: TabBar(
-            isScrollable: true,
-            labelColor: Colors.black,
-            unselectedLabelColor: Colors.grey,
-            indicatorColor: Colors.black,
-            tabs: categories.map((category) => Tab(text: category)).toList(),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(50), // Adjust the height as needed
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16), // Add space to the left and right
+                child: TabBar(
+                  isScrollable: isMobileView, // Scrollable tabs for mobile view
+                  labelColor: Colors.black,
+                  unselectedLabelColor: Colors.grey,
+                  indicatorColor: Colors.black,
+                  tabs: categories.map((category) => Tab(text: category)).toList(),
+                ),
+              ),
+            ),
           ),
         ),
         body: isLoading
@@ -82,12 +111,19 @@ class _FavoritePageState extends State<FavoritePage> {
                   )
                 : TabBarView(
                     children: categories.map((category) {
-                      // Placeholder: Filter products by category (if backend supports it)
-                      final filteredProducts = favorites; // Add category filtering logic here
-                      return _buildProductGrid(filteredProducts);
+                      if (category == 'Favorites') {
+                        // Show all products in the "Favorites" tab
+                        return _buildProductGrid(favorites);
+                      } else {
+                        // Filter products by category
+                        final filteredProducts = favorites
+                            .where((product) => product['type'] == category)
+                            .toList();
+                        return _buildProductGrid(filteredProducts);
+                      }
                     }).toList(),
                   ),
-      bottomNavigationBar: const Material3BottomNav()
+        bottomNavigationBar: const Material3BottomNav(),
       ),
     );
   }
@@ -125,11 +161,15 @@ class _FavoritePageState extends State<FavoritePage> {
             Text(
               product['brand'] ?? '',
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+              overflow: TextOverflow.ellipsis,  // Ensure overflow is handled
+              maxLines: 1,
             ),
             // Product Name
             Text(
               product['name'] ?? '',
               style: const TextStyle(color: Colors.grey, fontSize: 12),
+              overflow: TextOverflow.ellipsis,  // Ensure overflow is handled
+              maxLines: 1,
             ),
             // Price
             Text(
