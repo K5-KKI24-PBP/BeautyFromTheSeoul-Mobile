@@ -117,7 +117,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title: const Text('Login to your account.'),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -199,7 +199,7 @@ class _LoginPageState extends State<LoginPage> {
                     const Text("Don't have an account? "),
                     TextButton(
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                             builder: (context) => const RegisterPage(),

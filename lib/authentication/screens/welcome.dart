@@ -26,45 +26,47 @@ class WelcomePage extends StatelessWidget {
               ),
               Column(
                 children: [
-                  MaterialButton(
-                    elevation: 0.0,
-                    color: Colors.white,
-                    height: 56,
-                    minWidth: double.infinity,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    onPressed: () => Navigator.push(
+                  ElevatedButton(
+                    onPressed: () => Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => const LoginPage()),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: Colors.white,
+                      foregroundColor: const Color(0xFF071a58),
+                      minimumSize: const Size(double.infinity, 56),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                     child: const Text(
                       'Login',
                       style: TextStyle(
-                        color: Color(0xFF071a58),
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                   const SizedBox(height: 20),
-                  MaterialButton(
-                    elevation: 0.0,
-                    color: Colors.white,
-                    height: 56,
-                    minWidth: double.infinity,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    onPressed: () => Navigator.push(
+                  ElevatedButton(
+                    onPressed: () => Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => const RegisterPage()),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: Colors.white,
+                      foregroundColor: const Color(0xFF071a58),
+                      minimumSize: const Size(double.infinity, 56),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                     child: const Text(
                       'Register',
                       style: TextStyle(
-                        color: Color(0xFF071a58),
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

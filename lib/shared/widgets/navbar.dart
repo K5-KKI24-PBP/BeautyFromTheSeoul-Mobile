@@ -79,8 +79,8 @@ class _Material3BottomNavState extends State<Material3BottomNav> {
           label: 'Home',
         ),
         NavigationDestination(
-          icon: Icon(Icons.book_outlined, color: Colors.white),
-          selectedIcon: Icon(Icons.book_rounded, color: Color(0xFF071a58)),
+          icon: Icon(Icons.shopping_bag_outlined, color: Colors.white),
+          selectedIcon: Icon(Icons.shopping_bag, color: Color(0xFF071a58)),
           label: 'Catalogue',
         ),
         NavigationDestination(

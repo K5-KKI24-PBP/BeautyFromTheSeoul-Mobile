@@ -64,7 +64,7 @@ class ProductCard extends StatelessWidget {
                     ),
                     const Spacer(),
                     Text(
-                      product.fields.price,
+                      '₩${product.fields.price.toStringAsFixed(2)}',
                       style: const TextStyle(
                         color: Colors.red,
                         fontWeight: FontWeight.bold,
