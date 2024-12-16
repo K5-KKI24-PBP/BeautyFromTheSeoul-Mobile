@@ -20,13 +20,14 @@ class _CataloguePageState extends State<CataloguePage> {
   bool isLoading = true;
   String? error;
   bool isStaff = false;
-  List<String> favoriteProductIds = [];
+  Set<String> favoriteProductIds = {}; 
 
   @override
   void initState() {
     super.initState();
     _checkUserRole();
     fetchProducts();
+    fetchFavoriteProducts();
   }
 
   Future<void> _checkUserRole() async {
@@ -61,6 +62,80 @@ class _CataloguePageState extends State<CataloguePage> {
         isLoading = false;
       });
     }
+  }
+
+  /// Fetch favorite product IDs for the current user
+  Future<void> fetchFavoriteProducts() async {
+    final url = Uri.parse('http://localhost:8000/favorites/get_favorites/');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getInt('userId');
+
+      if (userId == null) {
+        setState(() {
+          error = 'User ID not found.';
+          isLoading = false;
+        });
+        return;
+      }
+
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'user_id': userId}),
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> favoriteIds = jsonDecode(response.body)['favorite_product_ids'];
+        setState(() {
+          favoriteProductIds = favoriteIds.map((id) => id.toString()).toSet();
+        });
+      } else {
+        print('Failed to fetch favorites: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching favorites: $e');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> toggleFavorite(String productId) async {
+    final url = Uri.parse('http://localhost:8000/favorites/add_favorites_flutter/');
+
+    try { 
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getInt('userId');
+      final username = prefs.getString('username'); 
+      final response = await http.post(
+          url,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'product_id': productId,
+            'user_id' : userId,
+            'username' : username,
+          }),
+        );
+
+        if (response.statusCode == 200) {
+          final responseData = jsonDecode(response.body);
+          setState(() {
+            if (responseData['status'] == 'added') {
+              favoriteProductIds.add(productId);
+            } else if (responseData['status'] == 'removed') {
+              favoriteProductIds.remove(productId);
+            }
+          });
+        } else {
+          print('Failed to toggle favorite: ${response.statusCode}');
+        }
+      } catch (e) {
+        print('Error occurred while toggling favorite: $e');
+      }
   }
 
   @override
@@ -113,7 +188,7 @@ class _CataloguePageState extends State<CataloguePage> {
             isStaff: isStaff,
             isFavorite: favoriteProductIds.contains(product.pk),
             onFavoriteToggle: () {
-              // Toggle favorite
+              toggleFavorite(product.pk); // Toggle favorite status
             },
           );
         },
