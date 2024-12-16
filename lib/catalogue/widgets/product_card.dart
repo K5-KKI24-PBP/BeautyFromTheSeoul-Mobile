@@ -4,93 +4,106 @@ import 'product_detail.dart';
 
 class ProductCard extends StatelessWidget {
   final Products product;
+  final bool isFavorite;
   final bool isStaff;
-  final bool isFavorite;  // Track if the product is a favorite
-  final VoidCallback onFavoriteToggle;  // Callback to handle favorite toggle
+  final VoidCallback onFavoriteToggle;
 
   const ProductCard({
-    super.key,
+    Key? key,
     required this.product,
-    required this.isStaff,
     required this.isFavorite,
+    required this.isStaff,
     required this.onFavoriteToggle,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 2,
-      child: GestureDetector(
-        onTap: () {
-          print(
-              'Navigating with product: ${product.fields.productName}, pk: ${product.pk}');
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ProductDetail(product: product),
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Product Image with loading and error handling
+          AspectRatio(
+            aspectRatio: 1, // To keep the image square
+            child: Image.network(
+              product.fields.image, // Replace with the actual image field
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child; // Fully loaded
+                return const Center(
+                  child: CircularProgressIndicator(), // Show loader
+                );
+              },
+              errorBuilder: (context, error, stackTrace) {
+                return const Center(
+                  child: Icon(
+                    Icons.broken_image,
+                    color: Colors.grey,
+                    size: 50,
+                  ), // Fallback icon when image fails
+                );
+              },
             ),
-          );
-        },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              flex: 3,
-              child: Image.network(
-                product.fields.image,
-                fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) =>
-                    const Center(child: Icon(Icons.error)),
+          ),
+          const SizedBox(height: 8),
+
+          // Product Name
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text(
+              product.fields.productName,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+
+          // Product Brand
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text(
+              product.fields.productBrand,
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
               ),
             ),
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      product.fields.productName,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      product.fields.productBrand,
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12,
-                      ),
-                    ),
-                    const Spacer(),
-                    Text(
-                      '₩${product.fields.price.toStringAsFixed(2)}',
-                      style: const TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    // Heart icon for favorite toggle
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: IconButton(
-                        icon: Icon(
-                          isFavorite ? Icons.favorite : Icons.favorite_border,
-                          color: isFavorite ? Colors.red : Colors.grey,
-                        ),
-                        onPressed: onFavoriteToggle,  // Trigger the callback when pressed
-                      ),
-                    ),
-                  ],
+          ),
+
+          const Spacer(),
+
+          // Price and Favorite Button
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                child: Text(
+                  '₩${product.fields.price.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
+              IconButton(
+                icon: Icon(
+                  isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: isFavorite ? Colors.red : Colors.grey,
+                ),
+                onPressed: onFavoriteToggle, // Toggle favorite status
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
