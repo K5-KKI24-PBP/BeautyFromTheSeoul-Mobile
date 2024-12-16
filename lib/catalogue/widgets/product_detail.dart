@@ -72,7 +72,7 @@ class _ProductDetailState extends State<ProductDetail> {
               ),
               const SizedBox(height: 16),
               Text(
-                'Price: ${widget.product.fields.price}',
+                'Price: ₩${widget.product.fields.price.toStringAsFixed(2)}',  
                 style: const TextStyle(
                   fontSize: 18,
                   color: Colors.red,

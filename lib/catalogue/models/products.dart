@@ -37,7 +37,7 @@ class Fields {
     String productBrand;
     String productType;
     String productDescription;
-    String price;
+    double price; 
     String image;
 
     Fields({
@@ -54,7 +54,7 @@ class Fields {
         productBrand: json["product_brand"],
         productType: json["product_type"],
         productDescription: json["product_description"],
-        price: json["price"],
+        price: json["price"].toDouble(), 
         image: json["image"],
     );
 
@@ -63,7 +63,7 @@ class Fields {
         "product_brand": productBrand,
         "product_type": productType,
         "product_description": productDescription,
-        "price": price,
+        "price": price, 
         "image": image,
     };
 }

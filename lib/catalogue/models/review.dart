@@ -50,9 +50,7 @@ class ReviewFields {
     });
 
     factory ReviewFields.fromJson(Map<String, dynamic> json) {
-        print("Parsing review fields: $json"); // Debug print
         final username = json["username"];
-        print("Username from JSON: $username"); // Debug print
         
         return ReviewFields(
             product: json["product"],

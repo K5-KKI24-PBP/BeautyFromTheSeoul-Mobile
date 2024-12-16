@@ -68,7 +68,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Register'),
+        title: const Text('Register a new account!'),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -91,7 +91,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: _usernameController,
                   decoration: const InputDecoration(
                     labelText: 'Username',
-                    prefixIcon: Icon(Icons.person),
+                    prefixIcon: Icon(Icons.verified_user),
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
@@ -144,7 +144,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: _nameController,
                   decoration: const InputDecoration(
                     labelText: 'Name',
-                    prefixIcon: Icon(Icons.badge),
+                    prefixIcon: Icon(Icons.person),
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
@@ -160,7 +160,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   value: _selectedRole,
                   decoration: const InputDecoration(
                     labelText: 'Role',
-                    prefixIcon: Icon(Icons.admin_panel_settings),
+                    prefixIcon: Icon(Icons.theater_comedy),
                     border: OutlineInputBorder(),
                   ),
                   items: const [
@@ -224,7 +224,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     const Text("Already have an account? "),
                     TextButton(
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(builder: (context) => LoginPage())
                         );

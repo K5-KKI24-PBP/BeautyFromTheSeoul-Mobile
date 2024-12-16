@@ -294,7 +294,7 @@ class ProductReviewsState extends State<ProductReviews> {
                   child: Text(review.fields.comment),
                 ),
                 trailing: isStaff ? IconButton(
-                  icon: const Icon(Icons.delete),
+                  icon: const Icon(Icons.delete, color: Colors.red),
                   onPressed: () => _handleDeleteReview(review),
                 ) : null,
               ),
