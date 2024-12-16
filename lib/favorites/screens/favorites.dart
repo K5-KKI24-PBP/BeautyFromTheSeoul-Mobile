@@ -23,7 +23,7 @@ class _FavoritePageState extends State<FavoritePage> {
   }
 
   Future<void> fetchFavorites() async {
-    const url = 'http://localhost:8000/favorites/get_favorites/';
+    const url = 'https://beauty-from-the-seoul.vercel.app/favorites/get_favorites/';
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getInt('userId');
 
