@@ -13,7 +13,7 @@ class EventCard extends StatelessWidget {
   final VoidCallback onRsvp;
 
   const EventCard({
-    Key? key,
+    super.key,
     required this. name,
     required this.description,
     required this.startDate,
@@ -23,7 +23,7 @@ class EventCard extends StatelessWidget {
     required this.onEdit,
     required this.onDelete,
     required this.onRsvp,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

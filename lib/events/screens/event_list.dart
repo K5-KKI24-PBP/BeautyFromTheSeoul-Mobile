@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:beauty_from_the_seoul_mobile/shared/widgets/navbar.dart';
 
 class EventPage extends StatefulWidget {
-  const EventPage({Key? key}) : super(key: key);
+  const EventPage({super.key});
 
   @override
   State<EventPage> createState() => _EventsPageState();
