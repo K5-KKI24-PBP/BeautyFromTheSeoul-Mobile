@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
             primary: const Color(0xFF071a58),
           ),
           navigationBarTheme: NavigationBarThemeData(
-            labelTextStyle: MaterialStateProperty.all(
+            labelTextStyle: WidgetStateProperty.all(
               const TextStyle(color: Colors.white),
             ),
           ),

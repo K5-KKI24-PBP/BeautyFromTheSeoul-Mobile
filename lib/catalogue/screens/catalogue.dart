@@ -9,7 +9,7 @@ import 'dart:convert';
 
 class CataloguePage extends StatefulWidget {
   final bool isStaff;
-  const CataloguePage({Key? key, this.isStaff = false}) : super(key: key);
+  const CataloguePage({super.key, this.isStaff = false});
 
   @override
   _CataloguePageState createState() => _CataloguePageState();
@@ -203,8 +203,8 @@ class _CataloguePageState extends State<CataloguePage> {
                   fetchProducts(); // Refresh the products
                 });
               },
-              child: const Icon(Icons.add),
               tooltip: 'Add Product',
+              child: const Icon(Icons.add),
             )
           : null, // Show FAB only for staff
     );

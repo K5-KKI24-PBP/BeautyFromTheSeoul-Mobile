@@ -217,7 +217,7 @@ class _AdminMenuState extends BaseMenuState<AdminMenu> {
       fetchAds();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to approve ad')),
+        const SnackBar(content: Text('Failed to approve ad')),
       );
     }
   }
@@ -231,7 +231,7 @@ class _AdminMenuState extends BaseMenuState<AdminMenu> {
       fetchAds();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to delete ad')),
+        const SnackBar(content: Text('Failed to delete ad')),
       );
     }
   }

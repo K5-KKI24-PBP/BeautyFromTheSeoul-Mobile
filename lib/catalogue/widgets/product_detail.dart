@@ -7,7 +7,7 @@ import 'product_reviews.dart';
 class ProductDetail extends StatefulWidget {  
   final Products product;
 
-  const ProductDetail({Key? key, required this.product}) : super(key: key);
+  const ProductDetail({super.key, required this.product});
 
   @override
   State<ProductDetail> createState() => _ProductDetailState();
@@ -99,7 +99,7 @@ class _ProductDetailState extends State<ProductDetail> {
 class ProductReviewsSummary extends StatelessWidget {
   final String productId;
 
-  const ProductReviewsSummary({Key? key, required this.productId}) : super(key: key);
+  const ProductReviewsSummary({super.key, required this.productId});
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +113,7 @@ class ProductReviewsSummary extends StatelessWidget {
               const Icon(Icons.star, color: Colors.amber, size: 20),
               const SizedBox(width: 4),
               Text(
-                '${snapshot.data!.toStringAsFixed(1)}',
+                snapshot.data!.toStringAsFixed(1),
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,

@@ -27,10 +27,10 @@ class ProductReviews extends StatefulWidget {
   final Function(double) onRatingUpdate;  
 
   const ProductReviews({
-    Key? key, 
+    super.key, 
     required this.productId,
     required this.onRatingUpdate,  
-  }) : super(key: key);
+  });
 
   @override
   State<ProductReviews> createState() => ProductReviewsState();  
@@ -273,7 +273,7 @@ class ProductReviewsState extends State<ProductReviews> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${review.fields.username}',
+                      review.fields.username,
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),

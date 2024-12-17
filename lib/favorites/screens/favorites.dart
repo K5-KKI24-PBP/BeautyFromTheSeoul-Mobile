@@ -3,16 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:beauty_from_the_seoul_mobile/shared/widgets/navbar.dart';
+import 'package:beauty_from_the_seoul_mobile/catalogue/models/products.dart';
+import 'package:beauty_from_the_seoul_mobile/catalogue/widgets/product_detail.dart';
 
 class FavoritePage extends StatefulWidget {
-  const FavoritePage({Key? key}) : super(key: key);
+  const FavoritePage({super.key});
 
   @override
   State<FavoritePage> createState() => _FavoritePageState();
 }
 
 class _FavoritePageState extends State<FavoritePage> {
-  List<Map<String, dynamic>> favorites = [];
+  List<Products> favorites = [];
   bool isLoading = true;
   List<String> categories = ['Favorites'];
 
@@ -47,17 +49,15 @@ class _FavoritePageState extends State<FavoritePage> {
         // Check if 'favorite_products' exists in the response
         if (responseData.containsKey('favorite_products')) {
           final List<dynamic> fetchedFavorites = responseData['favorite_products'];
-          setState(() {
-            // Map the fetched favorites to the favorites list
-            favorites = fetchedFavorites.map((item) => Map<String, dynamic>.from(item)).toList();
-            print(favorites);
+            setState(() {
+              // Convert the fetched favorites into a List<Products>
+            favorites = fetchedFavorites.map<Products>((item) => Products.fromJson(item)).toList();
 
-            // Extract categories based on the skincare_type from the products
-            // 'Favorites' is already the first category, so we add unique skincare types for other categories
-            categories = ['Favorites', ...favorites
-                .map((product) => product['type'] as String)
-                .toSet()
-                .toList()];
+            // Extract unique categories from the favorite products
+            categories = [
+              'Favorites',
+              ...favorites.map((product) => product.fields.productType).toSet(),
+            ];
                 
             isLoading = false;
           });
@@ -101,34 +101,34 @@ class _FavoritePageState extends State<FavoritePage> {
           ),
         ),
         body: isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : favorites.isEmpty
-                ? const Center(
-                    child: Text(
-                      "No favorites yet!",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                  )
-                : TabBarView(
-                    children: categories.map((category) {
-                      if (category == 'Favorites') {
-                        // Show all products in the "Favorites" tab
-                        return _buildProductGrid(favorites);
-                      } else {
-                        // Filter products by category
-                        final filteredProducts = favorites
-                            .where((product) => product['type'] == category)
-                            .toList();
-                        return _buildProductGrid(filteredProducts);
-                      }
-                    }).toList(),
+          ? const Center(child: CircularProgressIndicator())
+          : favorites.isEmpty
+              ? const Center(
+                  child: Text(
+                    "No favorites yet!",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
+                )
+              : TabBarView(
+                  children: categories.map((category) {
+                    if (category == 'Favorites') {
+                      // Show all products in the "Favorites" tab
+                      return _buildProductGrid(favorites);
+                    } else {
+                      // Filter products by category
+                      final filteredProducts = favorites
+                          .where((product) => product.fields.productType == category)
+                          .toList();
+                      return _buildProductGrid(filteredProducts);
+                    }
+                  }).toList(),
+                ),
         bottomNavigationBar: const Material3BottomNav(),
       ),
     );
   }
 
-  Widget _buildProductGrid(List<Map<String, dynamic>> products) {
+  Widget _buildProductGrid(List<Products> products) {
     return GridView.builder(
       padding: const EdgeInsets.all(10),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -140,47 +140,58 @@ class _FavoritePageState extends State<FavoritePage> {
       itemCount: products.length,
       itemBuilder: (context, index) {
         final product = products[index];
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Product Image
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(8),
-                  image: DecorationImage(
-                    image: NetworkImage(product['image'] ?? ''),
-                    fit: BoxFit.contain,
+        return GestureDetector(
+          onTap: () {
+            // Navigate to ProductDetail page when tapped
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProductDetail(product: product),
+              ),
+            );
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Product Image
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(8),
+                    image: DecorationImage(
+                      image: NetworkImage(product.fields.image),
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 8),
-            // Product Brand
-            Text(
-              product['brand'] ?? '',
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-              overflow: TextOverflow.ellipsis,  // Ensure overflow is handled
-              maxLines: 1,
-            ),
-            // Product Name
-            Text(
-              product['name'] ?? '',
-              style: const TextStyle(color: Colors.grey, fontSize: 12),
-              overflow: TextOverflow.ellipsis,  // Ensure overflow is handled
-              maxLines: 1,
-            ),
-            // Price
-            Text(
-              '\u20A9${product['price']?.toStringAsFixed(2) ?? ''}',
-              style: const TextStyle(
-                color: Colors.red,
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
+              const SizedBox(height: 8),
+              // Product Brand
+              Text(
+                product.fields.productBrand,
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
-            ),
-          ],
+              // Product Name
+              Text(
+                product.fields.productName,
+                style: const TextStyle(color: Colors.grey, fontSize: 12),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+              // Price
+              Text(
+                '\u20A9${product.fields.price.toStringAsFixed(2)}',
+                style: const TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
         );
       },
     );

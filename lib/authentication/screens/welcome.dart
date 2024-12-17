@@ -3,7 +3,7 @@ import 'package:beauty_from_the_seoul_mobile/authentication/screens/login.dart';
 import 'package:beauty_from_the_seoul_mobile/authentication/screens/register.dart';
 
 class WelcomePage extends StatelessWidget {
-  const WelcomePage({Key? key}) : super(key: key);
+  const WelcomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
