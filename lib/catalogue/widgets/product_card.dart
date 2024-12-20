@@ -7,6 +7,7 @@ class ProductCard extends StatelessWidget {
   final bool isStaff;
   final bool isFavorite; // Track if the product is a favorite
   final VoidCallback onFavoriteToggle; // Callback to handle favorite toggle
+  final VoidCallback onDelete; // Callback for delete action
 
   const ProductCard({
     super.key,
@@ -14,6 +15,7 @@ class ProductCard extends StatelessWidget {
     required this.isStaff,
     required this.isFavorite,
     required this.onFavoriteToggle,
+    required this.onDelete,
   });
 
   @override
@@ -74,17 +76,37 @@ class ProductCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    // Heart icon for favorite toggle
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: IconButton(
-                        icon: Icon(
-                          isFavorite ? Icons.favorite : Icons.favorite_border,
-                          color: isFavorite ? Colors.red : Colors.grey,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            isFavorite
+                                ? Icons.favorite
+                                : Icons.favorite_border,
+                            color: isFavorite ? Colors.red : Colors.grey,
+                          ),
+                          onPressed: onFavoriteToggle,
                         ),
-                        onPressed:
-                            onFavoriteToggle, // Trigger the callback when pressed
-                      ),
+                        if (isStaff) // Show buttons only for staff
+                          Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.edit, color: Colors.blue),
+                                onPressed: () {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Edit button pressed')),
+                                  );
+                                },
+                              ),
+                              
+                              IconButton(
+                                icon: const Icon(Icons.delete, color: Colors.red),
+                                onPressed: onDelete
+                              ),
+                            ],
+                          ),
+                      ],
                     ),
                   ],
                 ),
