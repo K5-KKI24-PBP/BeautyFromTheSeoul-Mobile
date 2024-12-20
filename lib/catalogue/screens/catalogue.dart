@@ -1,5 +1,6 @@
 import 'package:beauty_from_the_seoul_mobile/catalogue/widgets/add_product.dart';
 import 'package:beauty_from_the_seoul_mobile/catalogue/widgets/edit_product.dart';
+import 'package:beauty_from_the_seoul_mobile/catalogue/widgets/filter_products_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:beauty_from_the_seoul_mobile/catalogue/models/products.dart';
@@ -21,7 +22,11 @@ class _CataloguePageState extends State<CataloguePage> {
   bool isLoading = true;
   String? error;
   bool isStaff = false;
-  Set<String> favoriteProductIds = {}; 
+  Set<String> favoriteProductIds = {};
+
+  String? selectedBrand;
+  String? selectedProductType;
+  String? selectedSortBy;
 
   @override
   void initState() {
@@ -38,8 +43,9 @@ class _CataloguePageState extends State<CataloguePage> {
       isStaff = userRole == 'admin';
     });
   }
-  
-  Future<void> fetchProducts() async {
+
+  Future<void> fetchProducts(
+      {String? brand, String? type, String? sortBy}) async {
     try {
       final response = await http.get(
         Uri.parse(
@@ -47,40 +53,47 @@ class _CataloguePageState extends State<CataloguePage> {
       );
 
       if (response.statusCode == 200) {
-        setState(() {
-          products = productsFromJson(response.body);
-          isLoading = false;
-        });
+        // Check if the widget is still mounted before calling setState()
+        if (mounted) {
+          setState(() {
+            products = productsFromJson(response.body);
+            isLoading = false;
+          });
+        }
       } else {
+        // Check if the widget is still mounted before calling setState()
+        if (mounted) {
+          setState(() {
+            error = 'Failed to load products';
+            isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      // Check if the widget is still mounted before calling setState()
+      if (mounted) {
         setState(() {
-          error = 'Failed to load products';
+          error = 'Network error occurred';
           isLoading = false;
         });
       }
-    } catch (e) {
-      setState(() {
-        error = 'Network error occurred';
-        isLoading = false;
-      });
     }
   }
 
   Future<void> deleteProduct(String productId) async {
     try {
-      final response = await http.delete(Uri.parse('https://beauty-from-the-seoul.vercel.app/catalogue/delete_product_flutter/$productId/'));
-
+      final response = await http.delete(Uri.parse(
+          'https://beauty-from-the-seoul.vercel.app/catalogue/delete_product_flutter/$productId/'));
       print('Status Code: ${response.statusCode}');
       print('Response Body: ${response.body}');
     } catch (e) {
       print('Error: $e');
-      
-
     }
   }
 
-  /// Fetch favorite product IDs for the current user
   Future<void> fetchFavoriteProducts() async {
-    final url = Uri.parse('https://beauty-from-the-seoul.vercel.app/favorites/get_favorites/');
+    final url = Uri.parse(
+        'https://beauty-from-the-seoul.vercel.app/favorites/get_favorites/');
     try {
       final prefs = await SharedPreferences.getInstance();
       final userId = prefs.getInt('userId');
@@ -100,7 +113,8 @@ class _CataloguePageState extends State<CataloguePage> {
       );
 
       if (response.statusCode == 200) {
-        final List<dynamic> favoriteIds = jsonDecode(response.body)['favorite_product_ids'];
+        final List<dynamic> favoriteIds =
+            jsonDecode(response.body)['favorite_product_ids'];
         setState(() {
           favoriteProductIds = favoriteIds.map((id) => id.toString()).toSet();
         });
@@ -117,39 +131,37 @@ class _CataloguePageState extends State<CataloguePage> {
   }
 
   Future<void> toggleFavorite(String productId) async {
-    final url = Uri.parse('https://beauty-from-the-seoul.vercel.app/favorites/add_favorites_flutter/');
-
-    try { 
+    final url = Uri.parse(
+        'https://beauty-from-the-seoul.vercel.app/favorites/add_favorites_flutter/');
+    try {
       final prefs = await SharedPreferences.getInstance();
       final userId = prefs.getInt('userId');
-      final username = prefs.getString('username'); 
+      final username = prefs.getString('username');
       final response = await http.post(
-          url,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode({
-            'product_id': productId,
-            'user_id' : userId,
-            'username' : username,
-          }),
-        );
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'product_id': productId,
+          'user_id': userId,
+          'username': username,
+        }),
+      );
 
-        if (response.statusCode == 200) {
-          final responseData = jsonDecode(response.body);
-          setState(() {
-            if (responseData['status'] == 'added') {
-              favoriteProductIds.add(productId);
-            } else if (responseData['status'] == 'removed') {
-              favoriteProductIds.remove(productId);
-            }
-          });
-        } else {
-          print('Failed to toggle favorite: ${response.statusCode}');
-        }
-      } catch (e) {
-        print('Error occurred while toggling favorite: $e');
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        setState(() {
+          if (responseData['status'] == 'added') {
+            favoriteProductIds.add(productId);
+          } else if (responseData['status'] == 'removed') {
+            favoriteProductIds.remove(productId);
+          }
+        });
+      } else {
+        print('Failed to toggle favorite: ${response.statusCode}');
       }
+    } catch (e) {
+      print('Error occurred while toggling favorite: $e');
+    }
   }
 
   @override
@@ -176,9 +188,27 @@ class _CataloguePageState extends State<CataloguePage> {
                 });
               },
             ),
+          IconButton(
+            icon: const Icon(Icons.filter_alt),
+            tooltip: 'Filter Products',
+            onPressed: () {
+              // Open filter modal
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return FilterProductsWidget(
+                    onFilterApply: (brand, type, sortBy) {
+                      // Apply filter when filter is applied
+                      fetchProducts(brand: brand, type: type, sortBy: sortBy);
+                    },
+                  );
+                },
+              );
+            },
+          ),
         ],
       ),
-      body: isLoading 
+      body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : error != null
               ? Center(child: Text(error!))
@@ -207,32 +237,15 @@ class _CataloguePageState extends State<CataloguePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => EditProductForm(productId : product.pk),
+                            builder: (context) =>
+                                EditProductForm(productId: product.pk),
                           ),
                         );
                       },
-
                     );
                   },
                 ),
       bottomNavigationBar: const Material3BottomNav(),
-      // Add a FAB for adding products (optional)
-      floatingActionButton: isStaff
-          ? FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddProductPage(),
-                  ),
-                ).then((_) {
-                  fetchProducts(); // Refresh the products
-                });
-              },
-              tooltip: 'Add Product',
-              child: const Icon(Icons.add),
-            )
-          : null, // Show FAB only for staff
     );
   }
 }
