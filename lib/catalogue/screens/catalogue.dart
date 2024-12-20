@@ -1,4 +1,5 @@
 import 'package:beauty_from_the_seoul_mobile/catalogue/widgets/add_product.dart';
+import 'package:beauty_from_the_seoul_mobile/catalogue/widgets/edit_product.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:beauty_from_the_seoul_mobile/catalogue/models/products.dart';
@@ -201,7 +202,15 @@ class _CataloguePageState extends State<CataloguePage> {
                       },
                       onDelete: () {
                         deleteProduct(product.pk); // Delete the product
-                      }
+                      },
+                      onEdit: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditProductForm(productId : product.pk),
+                          ),
+                        );
+                      },
 
                     );
                   },

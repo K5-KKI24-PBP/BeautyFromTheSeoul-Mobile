@@ -8,7 +8,7 @@ class ProductCard extends StatelessWidget {
   final bool isFavorite; // Track if the product is a favorite
   final VoidCallback onFavoriteToggle; // Callback to handle favorite toggle
   final VoidCallback onDelete; // Callback for delete action
-
+  final VoidCallback onEdit;
   const ProductCard({
     super.key,
     required this.product,
@@ -16,6 +16,7 @@ class ProductCard extends StatelessWidget {
     required this.isFavorite,
     required this.onFavoriteToggle,
     required this.onDelete,
+    required this.onEdit
   });
 
   @override
@@ -93,11 +94,7 @@ class ProductCard extends StatelessWidget {
                             children: [
                               IconButton(
                                 icon: const Icon(Icons.edit, color: Colors.blue),
-                                onPressed: () {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Edit button pressed')),
-                                  );
-                                },
+                                onPressed: onEdit
                               ),
                               
                               IconButton(
