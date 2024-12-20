@@ -32,6 +32,7 @@ dependencies:
   flutter:
     sdk: flutter
   intl: ^0.17.0
+  webview_flutter: ^4.0.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -44,8 +45,6 @@ dependencies:
   flutter_rating_bar: ^4.0.1
   shared_preferences: ^2.2.2
   carousel_slider: ^5.0.0
-
-
 
 dev_dependencies:
   flutter_test:

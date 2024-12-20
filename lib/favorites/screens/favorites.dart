@@ -15,11 +15,13 @@ class FavoritePage extends StatefulWidget {
 
 class _FavoritePageState extends State<FavoritePage> {
   List<Products> favorites = [];
+  List<Products> sorted_favorites = [];
   List<String> selectedProducts = []; // Track selected products
   bool isLoading = true;
   bool isEditMode = false; // Toggle for edit mode
   List<String> categories = ['Favorites'];
   String selectedSortOption = 'Most Oldest';
+  List<Products> backupFavorites = [];
 
   @override
   void initState() {
@@ -53,6 +55,7 @@ class _FavoritePageState extends State<FavoritePage> {
             favorites = fetchedFavorites
                 .map<Products>((item) => Products.fromJson(item))
                 .toList();
+            backupFavorites = List.from(favorites);
             categories = [
               'Favorites',
               ...favorites.map((product) => product.fields.productType).toSet(),
@@ -88,6 +91,7 @@ class _FavoritePageState extends State<FavoritePage> {
           'user_id' : userId
           }),
       );
+      fetchFavorites();
 
       if (response.statusCode == 200) {
         print('Product $productId deleted successfully');
@@ -150,10 +154,11 @@ class _FavoritePageState extends State<FavoritePage> {
 
       if (selectedSortOption == 'Most Recent') {
         // Reverse the list to show the most recent first
-        favorites = List.from(favorites.reversed);
+        favorites = List.from(favorites);
+        favorites.sort((a, b) => b.pk.compareTo(a.pk)); // Sort based on productId or date
       } else if (selectedSortOption == 'Most Oldest') {
-        // Reverse the list again to restore the original order
-       favorites = List.from(favorites);
+        favorites = List.from(favorites);
+        favorites.sort((a, b) => a.pk.compareTo(b.pk)); // Sort based on productId or date
       }
     });
   }

@@ -83,8 +83,8 @@ class _FilterProductsWidgetState extends State<FilterProductsWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (error != null) ...[
-                    Text(error!, style: TextStyle(color: Colors.red)),
-                    SizedBox(height: 8),
+                    Text(error!, style: const TextStyle(color: Colors.red)),
+                    const SizedBox(height: 8),
                   ],
                   const Text('Select Brand:'),
                   DropdownButton<String>(
