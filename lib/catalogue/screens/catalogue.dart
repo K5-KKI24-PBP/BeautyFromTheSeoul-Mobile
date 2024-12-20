@@ -180,7 +180,7 @@ class _CataloguePageState extends State<CataloguePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AddProductPage(),
+                    builder: (context) => const AddProductPage(),
                   ),
                 ).then((_) {
                   // Refresh the product list when returning
@@ -246,6 +246,23 @@ class _CataloguePageState extends State<CataloguePage> {
                   },
                 ),
       bottomNavigationBar: const Material3BottomNav(),
+      // Add a FAB for adding products (optional)
+      floatingActionButton: isStaff
+          ? FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AddProductPage(),
+                  ),
+                ).then((_) {
+                  fetchProducts(); // Refresh the products
+                });
+              },
+              tooltip: 'Add Product',
+              child: const Icon(Icons.add),
+            )
+          : null, // Show FAB only for staff
     );
   }
 }

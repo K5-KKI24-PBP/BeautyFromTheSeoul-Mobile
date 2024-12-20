@@ -154,10 +154,10 @@ class _AddProductPageState extends State<AddProductPage> {
                 padding: const EdgeInsets.symmetric(vertical: 15),
               ),
               child: isSubmitting
-                  ? CircularProgressIndicator(
+                  ? const CircularProgressIndicator(
                       color: Colors.white,
                     )
-                  : Text('Add Product'),
+                  : const Text('Add Product'),
             ),
           ],
         ),

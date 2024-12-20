@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:beauty_from_the_seoul_mobile/events/models/events.dart';
 import 'package:beauty_from_the_seoul_mobile/events/widgets/events_card.dart';
-import 'package:pbp_django_auth/pbp_django_auth.dart';
-import 'package:provider/provider.dart';
 import 'package:beauty_from_the_seoul_mobile/shared/widgets/navbar.dart';
 
 class EventPage extends StatefulWidget {
