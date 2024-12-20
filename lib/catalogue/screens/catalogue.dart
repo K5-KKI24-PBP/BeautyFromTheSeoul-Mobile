@@ -37,7 +37,7 @@ class _CataloguePageState extends State<CataloguePage> {
       isStaff = userRole == 'admin';
     });
   }
-
+  
   Future<void> fetchProducts() async {
     try {
       final response = await http.get(
@@ -61,6 +61,19 @@ class _CataloguePageState extends State<CataloguePage> {
         error = 'Network error occurred';
         isLoading = false;
       });
+    }
+  }
+
+  Future<void> deleteProduct(String productId) async {
+    try {
+      final response = await http.delete(Uri.parse('https://beauty-from-the-seoul.vercel.app/catalogue/delete_product_flutter/$productId/'));
+
+      print('Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+    } catch (e) {
+      print('Error: $e');
+      
+
     }
   }
 
@@ -186,6 +199,10 @@ class _CataloguePageState extends State<CataloguePage> {
                       onFavoriteToggle: () {
                         toggleFavorite(product.pk); // Toggle favorite status
                       },
+                      onDelete: () {
+                        deleteProduct(product.pk); // Delete the product
+                      }
+
                     );
                   },
                 ),
