@@ -14,8 +14,9 @@ class ProductDetail extends StatefulWidget {
 }
 
 class _ProductDetailState extends State<ProductDetail> {
-  final reviewsKey = GlobalKey<ProductReviewsState>();  
-  double averageRating = 0.0; 
+  final reviewsKey = GlobalKey<ProductReviewsState>();
+  double averageRating = 0.0;
+  bool isDescriptionExpanded = false;
 
   @override
   Widget build(BuildContext context) {
@@ -79,18 +80,48 @@ class _ProductDetailState extends State<ProductDetail> {
               ),
               const SizedBox(height: 16),
               Text(
-                'Price: ₩${widget.product.fields.price.toStringAsFixed(2)}',  
+                'Price: ₩${widget.product.fields.price.toStringAsFixed(2)}',
                 style: const TextStyle(
                   fontFamily: 'TT',
                   fontSize: 18,
                   color: Colors.red,
                 ),
               ),
+              const SizedBox(height: 16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    isDescriptionExpanded
+                        ? widget.product.fields.productDescription
+                        : widget.product.fields.productDescription.length > 100
+                            ? '${widget.product.fields.productDescription.substring(0, 100)}...'
+                            : widget.product.fields.productDescription,
+                    style: const TextStyle(
+                      fontFamily: 'TT',
+                      fontSize: 16,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  if (widget.product.fields.productDescription.length > 100)
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          isDescriptionExpanded = !isDescriptionExpanded;
+                        });
+                      },
+                      child: Text(
+                        isDescriptionExpanded ? 'Show Less' : 'Show More',
+                        style: const TextStyle(color: Colors.blue),
+                      ),
+                    ),
+                ],
+              ),
               const SizedBox(height: 24),
               ProductReviews(
                 key: reviewsKey,
                 productId: widget.product.pk,
-                onRatingUpdate: (double newRating) {  
+                onRatingUpdate: (double newRating) {
                   setState(() {
                     averageRating = newRating;
                   });
@@ -103,6 +134,8 @@ class _ProductDetailState extends State<ProductDetail> {
     );
   }
 }
+
+
 
 class ProductReviewsSummary extends StatelessWidget {
   final String productId;
