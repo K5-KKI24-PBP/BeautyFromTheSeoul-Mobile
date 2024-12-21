@@ -282,7 +282,7 @@ class _AdminMenuState extends BaseMenuState<AdminMenu> {
   Future<void> editAd(String adId, String brandName, String imageUrl) async {
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:8000/ads/edit-ad/$adId/'),
+        Uri.parse('https://beauty-from-the-seoul.vercel.app/ads/edit-ad/$adId/'),
         headers: {
           'Content-Type': 'application/json',
         },
