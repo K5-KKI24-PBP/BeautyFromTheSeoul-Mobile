@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="beauty_from_the_seoul_mobile"
+        android:label="Beauty From The Seoul"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/beauty_from_the_seoul"
         android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
