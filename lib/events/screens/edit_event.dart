@@ -30,7 +30,7 @@ class _EditEventFormState extends State<EditEventForm> {
   }
 
   Future<void> _loadEventData() async {
-    final url = Uri.parse('http://beauty-from-the-seoul.vercel.app/events/get-event/${widget.eventId}/');
+    final url = Uri.parse('https://beauty-from-the-seoul.vercel.app/events/get-event/${widget.eventId}/');
     try {
       final response = await http.get(url);
       print('Status Code: ${response.statusCode}');
@@ -83,7 +83,7 @@ class _EditEventFormState extends State<EditEventForm> {
 
     try {
       final response = await http.put(
-        Uri.parse('http://beauty-from-the-seoul.vercel.app/events/edit-event-flutter/${widget.eventId}/'),
+        Uri.parse('https://beauty-from-the-seoul.vercel.app/events/edit-event-flutter/${widget.eventId}/'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

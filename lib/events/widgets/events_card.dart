@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:beauty_from_the_seoul_mobile/events/models/events.dart';
+import 'package:beauty_from_the_seoul_mobile/events/models/rsvp.dart';
 
 class EventCard extends StatelessWidget {
-  final String?  name;  // Can be null
+  final String? name;  // Can be null
   final String? description;  // Can be null
   final DateTime startDate;  // Assuming date fields are always present
   final DateTime endDate;  // Assuming date fields are always present
@@ -10,11 +12,14 @@ class EventCard extends StatelessWidget {
   final String? promotionType;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
+  final bool isStaff;
+  final bool isRsvp; //check if the customer already RSVP
+  final VoidCallback onCancelRsvp;
   final VoidCallback onRsvp;
 
   const EventCard({
     Key? key,
-    required this. name,
+    required this.name,
     required this.description,
     required this.startDate,
     required this.endDate,
@@ -22,6 +27,9 @@ class EventCard extends StatelessWidget {
     required this.location,
     required this.onEdit,
     required this.onDelete,
+    required this.isRsvp,
+    required this.isStaff,
+    required this.onCancelRsvp,
     required this.onRsvp,
   }) : super(key: key);
 
@@ -101,29 +109,38 @@ class EventCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    ElevatedButton(
-                      onPressed: onEdit,
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.black, backgroundColor: const Color.fromARGB(255, 245, 195, 88),
+                    if (isStaff) ...[
+                      ElevatedButton(
+                        onPressed: onEdit,
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.black, backgroundColor: const Color.fromARGB(255, 245, 195, 88),
+                        ),
+                        child: const Text('Edit'),
                       ),
-                      child: const Text('Edit'),
-                    ),
-                    const SizedBox(width: 8),
-                    ElevatedButton(
-                      onPressed: onDelete,
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.black, backgroundColor: const Color.fromARGB(255, 202, 194,249),
+                      const SizedBox(width: 8),
+                      ElevatedButton(
+                        onPressed: onDelete,
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.black, backgroundColor: const Color.fromARGB(255, 202, 194, 249),
+                        ),
+                        child: const Text('Delete'),
                       ),
-                      child: const Text('Delete'),
-                    ),
-                    const SizedBox(width: 8),
-                    ElevatedButton(
-                      onPressed: onRsvp,
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white, backgroundColor: const Color(0xFF071a58),
+                    ] else ...[
+                      ElevatedButton(
+                        onPressed: () {
+                          if (isRsvp) {
+                            onCancelRsvp();
+                          } else {
+                            onRsvp();
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: const Color(0xFF071a58),
+                        ),
+                        child: isRsvp ? const Text('Cancel RSVP') : const Text('RSVP'),
                       ),
-                      child: const Text('RSVP'),
-                    ),
+                    ],
                   ],
                 ),
               ],
