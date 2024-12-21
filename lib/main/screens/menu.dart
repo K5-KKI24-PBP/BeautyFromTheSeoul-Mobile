@@ -5,6 +5,11 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:beauty_from_the_seoul_mobile/main/models/ad_entry.dart';
 import 'package:beauty_from_the_seoul_mobile/authentication/screens/login.dart';
 import 'package:beauty_from_the_seoul_mobile/shared/widgets/navbar.dart';
+import 'package:beauty_from_the_seoul_mobile/main/widgets/category_section.dart';
+import 'package:beauty_from_the_seoul_mobile/main/widgets/event_section.dart';
+import 'package:beauty_from_the_seoul_mobile/main/widgets/concern_section.dart';
+import 'package:beauty_from_the_seoul_mobile/main/widgets/location_section.dart';
+import 'package:beauty_from_the_seoul_mobile/main/widgets/adsubmit_section.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -146,7 +151,6 @@ class AdCarousel extends StatelessWidget {
   }
 }
 
-// Reusable Ad Submission Dialog
 void showAdSubmissionDialog(BuildContext context, Function(String, String) onSubmit) {
   final brandNameController = TextEditingController();
   final imageUrlController = TextEditingController();
@@ -189,7 +193,6 @@ void showAdSubmissionDialog(BuildContext context, Function(String, String) onSub
   );
 }
 
-// Customer Menu - Shows only approved ads
 class CustomerMenu extends StatefulWidget {
   const CustomerMenu({super.key});
 
@@ -218,16 +221,28 @@ class _CustomerMenuState extends BaseMenuState<CustomerMenu> {
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : AdCarousel(
-              ads: ads.where((ad) => ad.fields.isApproved).toList(),
-              screenWidth: screenWidth,
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  AdCarousel(
+                    ads: ads.where((ad) => ad.fields.isApproved).toList(),
+                    screenWidth: screenWidth,
+                  ),
+                  const CategorySection(),  
+                  const PromotionEventSection(),
+                  const SkinConcernSection(),
+                  const LocationSection(),
+                  AdSubmissionSection(onAdSubmit: (context) {
+                    showAdSubmissionDialog(context, submitAd);
+                  }),
+                ],
+              ),
             ),
       bottomNavigationBar: const Material3BottomNav(),
     );
   }
 }
 
-// Admin Menu - Shows all ads
 class AdminMenu extends StatefulWidget {
   const AdminMenu({super.key});
 
@@ -306,11 +321,24 @@ class _AdminMenuState extends BaseMenuState<AdminMenu> {
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : AdCarousel(
-              ads: ads,
-              screenWidth: screenWidth,
-              isAdmin: true,
-              onLongPress: showAdminActionsDialog,
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  AdCarousel(
+                    ads: ads,
+                    screenWidth: screenWidth,
+                    isAdmin: true,
+                    onLongPress: showAdminActionsDialog,
+                  ),
+                  const CategorySection(), 
+                  const PromotionEventSection(),
+                  const SkinConcernSection(),
+                  const LocationSection(),
+                  AdSubmissionSection(onAdSubmit: (context) {
+                    showAdSubmissionDialog(context, submitAd);
+                  }),
+                ],
+              ),
             ),
       bottomNavigationBar: const Material3BottomNav(),
     );
