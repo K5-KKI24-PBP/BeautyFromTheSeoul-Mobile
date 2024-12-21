@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:beauty_from_the_seoul_mobile/main/screens/onboarding.dart';
 import 'package:beauty_from_the_seoul_mobile/authentication/screens/welcome.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:month_year_picker/month_year_picker.dart';
 
 void main() {
   runApp(const MyApp());
@@ -32,6 +34,15 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          MonthYearPickerLocalizations.delegate, // Add this delegate
+        ],
+        supportedLocales: const [
+          Locale('en', ''), // Add supported locales here
+        ],
         home: const WelcomePage(),
       ),
     );
