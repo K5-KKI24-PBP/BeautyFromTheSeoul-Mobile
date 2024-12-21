@@ -1,5 +1,6 @@
 import 'dart:convert';
-import 'dart:math';
+import 'package:month_year_picker/month_year_picker.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:beauty_from_the_seoul_mobile/events/screens/create_event.dart';
 import 'package:beauty_from_the_seoul_mobile/events/screens/edit_event.dart';
 import 'package:flutter/material.dart';
@@ -34,16 +35,12 @@ class _EventsPageState extends State<EventPage> {
   }
   
   Future<List<Rsvp>> fetchRsvp() async {
-    print('Fetching RSVP data...');
     try {
       final response = await http.get(
           Uri.parse('https://beauty-from-the-seoul.vercel.app/events/rsvp-json/'));
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body);
         List<Rsvp> rsvp = data.map((rsvpData) => Rsvp.fromJson(rsvpData)).toList();
-        print('Parsed RSVP data: $rsvp');
         return rsvp;
       } else {
         throw Exception('Failed to load RSVP data. Status code: ${response.statusCode}');
@@ -92,9 +89,6 @@ class _EventsPageState extends State<EventPage> {
       if (response.statusCode == 200) {
         var responseData = jsonDecode(response.body);
 
-        // Debugging: Print the entire response structure
-        print('Response Data: $responseData');
-
         // Check if the 'events' field is a String, and if so, decode it
         var eventsData = responseData['events'];
         if (eventsData is String) {
@@ -129,7 +123,6 @@ class _EventsPageState extends State<EventPage> {
           'username': username,
         }),
       );
-      print('Backend response: ${response.body}');
 
       if (response.statusCode == 200) {
         final rsvpStatus = jsonDecode(response.body)['rsvp_status'] ?? false;
@@ -164,8 +157,6 @@ class _EventsPageState extends State<EventPage> {
         }),
       );
 
-      print('Backend response: ${response.body}');
-
       if (response.statusCode == 200) {
         setState(() {
           rsvpEventIds.remove(eventId);
@@ -182,7 +173,6 @@ class _EventsPageState extends State<EventPage> {
   @override
   void initState() {
     super.initState();
-    print('initState is called');
     _checkUserRole();
     // Initially load all events
     fetchEvents().then((fetchedEvents) {
@@ -194,20 +184,18 @@ class _EventsPageState extends State<EventPage> {
     
     // Fetch RSVP status for the user
     fetchRsvp().then((fetchedRsvp) {
-      print('Fetched RSVP: $fetchedRsvp');
       setState(() {
         rsvp = fetchedRsvp;
         rsvpEventIds = fetchedRsvp
             .where((rsvp) => rsvp.fields.rsvpStatus) // Filter by RSVP status
             .map((rsvp) => rsvp.fields.event) // Extract the event UUID
             .toSet(); // Convert to a set
-        print('RSVP Event IDs: $rsvpEventIds');
       });
     });
   }
 
   void _selectDate(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
+    final DateTime? pickedDate = await showMonthYearPicker(
       context: context,
       initialDate: _selectedDate ?? DateTime.now(),
       firstDate: DateTime(2024),
@@ -251,11 +239,12 @@ class _EventsPageState extends State<EventPage> {
       ),
       body: Column(
         children: [
+          const Padding(padding: EdgeInsets.all(6)),
           OutlinedButton(
             onPressed: () => _selectDate(context), // Open the date picker
             child: const Text('Filter by Month'),
           ),
-          IconButton(
+          if (isStaff) ...[IconButton(
             icon: const Icon(Icons.add),
             tooltip: 'Add Event',
             onPressed: () {
@@ -264,7 +253,7 @@ class _EventsPageState extends State<EventPage> {
                 MaterialPageRoute(builder: (context) => const EventForm()),
               );
             },
-          ),
+          )],
           Expanded(
             child: FutureBuilder<List<Events>>(
               future: fetchEvents(),  // Load all events initially
@@ -280,7 +269,7 @@ class _EventsPageState extends State<EventPage> {
                     itemCount: events.length,
                     itemBuilder: (context, index) {
                       final event = events[index];
-                      print('Event PK: ${event.pk}');
+
                       return EventCard(
                         name: event.fields.name,
                         description: event.fields.description,
