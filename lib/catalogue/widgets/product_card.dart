@@ -56,6 +56,7 @@ class ProductCard extends StatelessWidget {
                     Text(
                       product.fields.productName,
                       style: const TextStyle(
+                        fontFamily: 'Laurasia',
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
                       ),
@@ -65,6 +66,7 @@ class ProductCard extends StatelessWidget {
                     Text(
                       product.fields.productBrand,
                       style: const TextStyle(
+                        fontFamily: 'TT',
                         color: Colors.grey,
                         fontSize: 12,
                       ),
@@ -73,6 +75,7 @@ class ProductCard extends StatelessWidget {
                     Text(
                       '₩${product.fields.price.toStringAsFixed(2)}',
                       style: const TextStyle(
+                        fontFamily: 'TT',
                         color: Colors.red,
                         fontWeight: FontWeight.bold,
                       ),
