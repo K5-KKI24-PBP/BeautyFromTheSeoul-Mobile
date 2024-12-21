@@ -99,9 +99,6 @@ class _EditProductFormState extends State<EditProductForm> {
     }
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,10 +124,12 @@ class _EditProductFormState extends State<EditProductForm> {
               TextFormField(
                 controller: _typeController,
                 decoration: const InputDecoration(labelText: 'Product Type'),
+                validator: (value) => value == null || value.isEmpty ? 'Please enter a type' : null,
               ),
               TextFormField(
                 controller: _descriptionController,
                 decoration: const InputDecoration(labelText: 'Product Description'),
+                validator: (value) => value == null || value.isEmpty ? 'Please enter a description' : null,
               ),
               TextFormField(
                 controller: _priceController,
@@ -149,6 +148,7 @@ class _EditProductFormState extends State<EditProductForm> {
               TextFormField(
                 controller: _imageController,
                 decoration: const InputDecoration(labelText: 'Image URL'),
+                validator: (value) => value == null || value.isEmpty ? 'Please enter an image URL' : null,
               ),
               const SizedBox(height: 20),
               _isLoading
