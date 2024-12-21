@@ -31,7 +31,7 @@ class EventCard extends StatelessWidget {
     required this.isStaff,
     required this.onCancelRsvp,
     required this.onRsvp,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

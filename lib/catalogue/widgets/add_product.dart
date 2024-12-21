@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class AddProductPage extends StatefulWidget {
+  const AddProductPage({super.key});
+
   @override
   _AddProductPageState createState() => _AddProductPageState();
 }
@@ -30,7 +32,7 @@ class _AddProductPageState extends State<AddProductPage> {
         priceController.text.isEmpty ||
         imageController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please fill out all fields!')),
+        const SnackBar(content: Text('Please fill out all fields!')),
       );
       return;
     }
@@ -58,7 +60,7 @@ class _AddProductPageState extends State<AddProductPage> {
       // Check response from server
       if (response.statusCode == 201) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Product added successfully!')),
+          const SnackBar(content: Text('Product added successfully!')),
         );
         Navigator.pop(context); // Close the page on success
       } else {
@@ -78,7 +80,7 @@ class _AddProductPageState extends State<AddProductPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Add Product')),
+      appBar: AppBar(title: const Text('Add Product')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
@@ -86,76 +88,76 @@ class _AddProductPageState extends State<AddProductPage> {
             // Product Name
             TextField(
               controller: productNameController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Product Name',
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
             // Product Brand
             TextField(
               controller: productBrandController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Product Brand',
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
             // Product Type
             TextField(
               controller: productTypeController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Product Type',
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
             // Product Description
             TextField(
               controller: productDescriptionController,
               maxLines: 3,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Product Description',
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
             // Price
             TextField(
               controller: priceController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Price',
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.number,
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
             // Image URL
             TextField(
               controller: imageController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Image URL',
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Submit Button
             ElevatedButton(
               onPressed: isSubmitting ? null : addProduct,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 15),
+              ),
               child: isSubmitting
-                  ? CircularProgressIndicator(
+                  ? const CircularProgressIndicator(
                       color: Colors.white,
                     )
-                  : Text('Add Product'),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 15),
-              ),
+                  : const Text('Add Product'),
             ),
           ],
         ),

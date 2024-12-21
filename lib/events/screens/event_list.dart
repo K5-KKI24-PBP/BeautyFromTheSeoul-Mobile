@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:beauty_from_the_seoul_mobile/events/models/rsvp.dart';
 
 class EventPage extends StatefulWidget {
-  const EventPage({Key? key}) : super(key: key);
+  const EventPage({super.key});
 
   @override
   State<EventPage> createState() => _EventsPageState();

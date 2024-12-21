@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 class EventForm extends StatefulWidget {
-  const EventForm({Key? key}) : super(key: key);
+  const EventForm({super.key});
 
   @override
   State<EventForm> createState() => _EventFormState();
@@ -104,7 +104,7 @@ class _EventFormState extends State<EventForm> {
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
+                      backgroundColor: WidgetStateProperty.all<Color>(
                           const Color.fromARGB(255, 12, 26, 84)),
                     ),
                     onPressed: () async {
@@ -185,7 +185,7 @@ class _EventFormState extends State<EventForm> {
         decoration: InputDecoration(
           hintText: hint,
           labelText: label,
-          border: OutlineInputBorder(),
+          border: const OutlineInputBorder(),
         ),
         onChanged: onChanged,
         validator: validator,
@@ -201,12 +201,12 @@ class _EventFormState extends State<EventForm> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextFormField(
-        controller: TextEditingController(text: selectedDate != null ? "${selectedDate.toIso8601String().substring(0, 10)}" : ""),
+        controller: TextEditingController(text: selectedDate != null ? selectedDate.toIso8601String().substring(0, 10) : ""),
         decoration: InputDecoration(
           hintText: label,
           labelText: label,
-          suffixIcon: Icon(Icons.calendar_today),
-          border: OutlineInputBorder(),
+          suffixIcon: const Icon(Icons.calendar_today),
+          border: const OutlineInputBorder(),
         ),
         onTap: () => selectDate(context),
         readOnly: true, // to prevent keyboard from appearing

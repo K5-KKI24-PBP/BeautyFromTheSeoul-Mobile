@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 class EditEventForm extends StatefulWidget {
   final String eventId;
 
-  const EditEventForm({Key? key, required this.eventId}) : super(key: key);
+  const EditEventForm({super.key, required this.eventId});
 
   @override
   State<EditEventForm> createState() => _EditEventFormState();
@@ -14,12 +14,12 @@ class EditEventForm extends StatefulWidget {
 
 class _EditEventFormState extends State<EditEventForm> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _titleController = TextEditingController();
-  TextEditingController _descriptionController = TextEditingController();
-  TextEditingController _locationController = TextEditingController();
-  TextEditingController _promotionTypeController = TextEditingController();
-  TextEditingController _startDateController = TextEditingController();
-  TextEditingController _endDateController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _promotionTypeController = TextEditingController();
+  final TextEditingController _startDateController = TextEditingController();
+  final TextEditingController _endDateController = TextEditingController();
   DateTime? _startDate;
   DateTime? _endDate;
 
@@ -100,7 +100,7 @@ class _EditEventFormState extends State<EditEventForm> {
       final responseBody = jsonDecode(response.body);
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Event successfully updated!')),
+          const SnackBar(content: Text('Event successfully updated!')),
         );
         Navigator.pop(context);
       } else {
@@ -148,7 +148,7 @@ class _EditEventFormState extends State<EditEventForm> {
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
+                    backgroundColor: WidgetStateProperty.all<Color>(
                       const Color.fromARGB(255, 12, 26, 84)),
                   ),
                   onPressed: _submitData,
@@ -175,7 +175,7 @@ class _EditEventFormState extends State<EditEventForm> {
         decoration: InputDecoration(
           hintText: hint,
           labelText: label,
-          border: OutlineInputBorder(),
+          border: const OutlineInputBorder(),
         ),
         validator: (value) {
           if (value == null || value.isEmpty) {
@@ -195,8 +195,8 @@ class _EditEventFormState extends State<EditEventForm> {
         decoration: InputDecoration(
           hintText: label,
           labelText: label,
-          suffixIcon: Icon(Icons.calendar_today),
-          border: OutlineInputBorder(),
+          suffixIcon: const Icon(Icons.calendar_today),
+          border: const OutlineInputBorder(),
         ),
         onTap: () => _selectDate(context, isStartDate: isStartDate),
         readOnly: true,

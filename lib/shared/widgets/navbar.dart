@@ -3,6 +3,7 @@ import 'package:beauty_from_the_seoul_mobile/main/screens/menu.dart';
 import 'package:beauty_from_the_seoul_mobile/catalogue/screens/catalogue.dart';
 import 'package:beauty_from_the_seoul_mobile/events/screens/event_list.dart';
 import 'package:beauty_from_the_seoul_mobile/favorites/screens/favorites.dart';
+import 'package:beauty_from_the_seoul_mobile/locator/screens/locations.dart';
 
 class Material3BottomNav extends StatefulWidget {
   final bool showNavBar; // New parameter to control visibility
@@ -21,6 +22,7 @@ class _Material3BottomNavState extends State<Material3BottomNav> {
     const CataloguePage(),
     const EventPage(),
     const FavoritePage(),
+    const LocatorPage()
   ];
 
   @override
@@ -40,6 +42,8 @@ class _Material3BottomNavState extends State<Material3BottomNav> {
         setState(() => _selectedIndex = 2);
       } else if (currentRoute.contains('favorites')) {
         setState(() => _selectedIndex = 3);
+      } else if (currentRoute.contains('locator')) {
+        setState(() => _selectedIndex = 4);
       } else {
         setState(() => _selectedIndex = 0);
       }
@@ -73,7 +77,9 @@ class _Material3BottomNavState extends State<Material3BottomNav> {
                   ? '/events' 
                   : index == 3
                     ? '/favorites'
-                    : '/home',
+                    : index == 4
+                      ? '/locator'
+                      : '/home',
             ),
           ),
         );
@@ -98,6 +104,11 @@ class _Material3BottomNavState extends State<Material3BottomNav> {
           icon: Icon(Icons.favorite_border, color: Colors.white), // Unselected icon
           selectedIcon: Icon(Icons.favorite, color: Color(0xFF071a58)), // Selected icon
           label: 'Favorites',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.map, color: Colors.white), // Unselected icon
+          selectedIcon: Icon(Icons.map, color: Color(0xFF071a58)), // Selected icon
+          label: 'Locator',
         ),
       ],
       surfaceTintColor: Colors.transparent,
