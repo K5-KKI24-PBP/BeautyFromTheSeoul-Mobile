@@ -6,7 +6,7 @@ import 'package:beauty_from_the_seoul_mobile/main/models/ad_entry.dart';
 import 'package:beauty_from_the_seoul_mobile/authentication/screens/login.dart';
 import 'package:beauty_from_the_seoul_mobile/shared/widgets/navbar.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert'; 
+import 'dart:convert';
 
 // Shared base class for Ads
 abstract class BaseMenuState<T extends StatefulWidget> extends State<T> {
@@ -42,6 +42,37 @@ abstract class BaseMenuState<T extends StatefulWidget> extends State<T> {
     }
   }
 
+  Future<void> submitAd(String brandName, String imageUrl) async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://localhost:8000//ads/submit/'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'brand_name': brandName,
+          'image': imageUrl,
+        }),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Ad submitted successfully')),
+        );
+        fetchAds();
+      } else {
+        final responseBody = jsonDecode(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(responseBody['message'] ?? 'Failed to submit ad')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
   Future<void> logout(BuildContext context) async {
     final request = context.read<CookieRequest>();
     final response = await request.logout(
@@ -63,6 +94,102 @@ abstract class BaseMenuState<T extends StatefulWidget> extends State<T> {
   }
 }
 
+// Reusable Ad Carousel Widget
+class AdCarousel extends StatelessWidget {
+  final List<AdEntry> ads;
+  final double screenWidth;
+  final bool isAdmin;
+  final Function(AdEntry)? onLongPress;
+
+  const AdCarousel({
+    required this.ads,
+    required this.screenWidth,
+    this.isAdmin = false,
+    this.onLongPress,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return CarouselSlider(
+      items: [
+        _buildImageSlide('images/logo.png', screenWidth),  // Logo Slide
+        ...ads.map(
+          (ad) => GestureDetector(
+            onLongPress: isAdmin ? () => onLongPress!(ad) : null,
+            child: _buildImageSlide(ad.fields.image, screenWidth),
+          ),
+        ),
+      ],
+      options: CarouselOptions(
+        height: 300,
+        viewportFraction: 1.0,
+        autoPlay: true,
+        enlargeCenterPage: false,
+      ),
+    );
+  }
+
+  Widget _buildImageSlide(String imageUrl, double width) {
+    return Container(
+      width: width,
+      height: 300,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: imageUrl.startsWith('http')
+              ? NetworkImage(imageUrl)
+              : AssetImage(imageUrl) as ImageProvider,
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+}
+
+// Reusable Ad Submission Dialog
+void showAdSubmissionDialog(BuildContext context, Function(String, String) onSubmit) {
+  final brandNameController = TextEditingController();
+  final imageUrlController = TextEditingController();
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Submit an Ad'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: brandNameController,
+              decoration: const InputDecoration(labelText: 'Brand Name'),
+            ),
+            TextField(
+              controller: imageUrlController,
+              decoration: const InputDecoration(labelText: 'Image URL'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              onSubmit(brandNameController.text, imageUrlController.text);
+              Navigator.of(context).pop();
+            },
+            child: const Text('Submit'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+// Customer Menu - Shows only approved ads
 class CustomerMenu extends StatefulWidget {
   const CustomerMenu({super.key});
 
@@ -71,96 +198,17 @@ class CustomerMenu extends StatefulWidget {
 }
 
 class _CustomerMenuState extends BaseMenuState<CustomerMenu> {
-  void showAdSubmissionDialog() {
-    final brandNameController = TextEditingController();
-    final imageUrlController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Submit an Ad'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: brandNameController,
-                decoration: const InputDecoration(labelText: 'Brand Name'),
-              ),
-              TextField(
-                controller: imageUrlController,
-                decoration: const InputDecoration(labelText: 'Image URL'),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                submitAd(brandNameController.text, imageUrlController.text);
-                Navigator.of(context).pop();
-              },
-              child: const Text('Submit'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> submitAd(String brandName, String imageUrl) async {
-    try {
-      final response = await http.post(
-        Uri.parse('http://localhost:8000//ads/submit/'),
-        headers: {
-          'Content-Type': 'application/json', // Send as JSON
-        },
-        body: jsonEncode({
-          'brand_name': brandName,
-          'image': imageUrl,
-        }),
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Ad submitted successfully')),
-        );
-        fetchAds(); // Refresh ads after submission
-      } else {
-        final responseBody = jsonDecode(response.body);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(responseBody['message'] ?? 'Failed to submit ad')),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
-    }
-  }
-
-
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Beauty from the Seoul - Customer'),
         actions: [
           TextButton(
-            onPressed: showAdSubmissionDialog, // Function to submit an ad
-            child: const Text(
-              'Submit Ad',
-              style: TextStyle(
-                color: Colors.black, // Ensures text is visible against AppBar background
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
+            onPressed: () => showAdSubmissionDialog(context, submitAd),
+            child: const Text('Submit Ad'),
           ),
           IconButton(
             icon: const Icon(Icons.logout),
@@ -170,36 +218,16 @@ class _CustomerMenuState extends BaseMenuState<CustomerMenu> {
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : CarouselSlider(
-              items: [
-                Image.asset(
-                  'images/logo.png',
-                  fit: BoxFit.cover,
-                  height: 200,
-                ),
-                ...ads.where((ad) => ad.fields.isApproved).map((ad) => Column(
-                      children: [
-                        Image.network(
-                          ad.fields.image,
-                          fit: BoxFit.cover,
-                          height: 200,
-                          width: double.infinity,
-                        ),
-                        Text(ad.fields.brandName),
-                      ],
-                    )),
-              ],
-              options: CarouselOptions(
-                height: 300,
-                autoPlay: true,
-                enlargeCenterPage: true,
-              ),
+          : AdCarousel(
+              ads: ads.where((ad) => ad.fields.isApproved).toList(),
+              screenWidth: screenWidth,
             ),
       bottomNavigationBar: const Material3BottomNav(),
     );
   }
 }
 
+// Admin Menu - Shows all ads
 class AdminMenu extends StatefulWidget {
   const AdminMenu({super.key});
 
@@ -208,7 +236,7 @@ class AdminMenu extends StatefulWidget {
 }
 
 class _AdminMenuState extends BaseMenuState<AdminMenu> {
-  Future<void> approveAd(String adId) async {
+    Future<void> approveAd(String adId) async {
     final response = await http.post(
       Uri.parse('http://localhost:8000//ads/approve/$adId/'),
     );
@@ -244,17 +272,11 @@ class _AdminMenuState extends BaseMenuState<AdminMenu> {
           title: Text('Actions for ${ad.fields.brandName}'),
           actions: [
             TextButton(
-              onPressed: () {
-                approveAd(ad.pk);
-                Navigator.of(context).pop();
-              },
+              onPressed: () => approveAd(ad.pk),
               child: const Text('Approve'),
             ),
             TextButton(
-              onPressed: () {
-                deleteAd(ad.pk);
-                Navigator.of(context).pop();
-              },
+              onPressed: () => deleteAd(ad.pk),
               child: const Text('Delete'),
             ),
           ],
@@ -265,52 +287,30 @@ class _AdminMenuState extends BaseMenuState<AdminMenu> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Beauty from the Seoul - Admin'),
         actions: [
+          TextButton(
+            onPressed: () => showAdSubmissionDialog(context, submitAd),
+            child: const Text('Submit Ad'),
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () => logout(context),
           ),
         ],
+    
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : CarouselSlider(
-              items: [
-                Image.asset(
-                  'images/logo.png',
-                  fit: BoxFit.cover,
-                  height: 200,
-                ),
-                ...ads.map((ad) => GestureDetector(
-                      onLongPress: () => showAdminActionsDialog(ad),
-                      child: Column(
-                        children: [
-                          Image.network(
-                            ad.fields.image,
-                            fit: BoxFit.cover,
-                            height: 200,
-                            width: double.infinity,
-                            errorBuilder: (context, error, stackTrace) {
-                              return const Icon(
-                                Icons.broken_image,
-                                size: 100,
-                                color: Colors.grey,
-                              ); 
-                            },
-                          ),
-                          Text(ad.fields.brandName),
-                        ],
-                      ),
-                    )),
-              ],
-              options: CarouselOptions(
-                height: 300,
-                autoPlay: true,
-                enlargeCenterPage: true,
-              ),
+          : AdCarousel(
+              ads: ads,
+              screenWidth: screenWidth,
+              isAdmin: true,
+              onLongPress: showAdminActionsDialog,
             ),
       bottomNavigationBar: const Material3BottomNav(),
     );

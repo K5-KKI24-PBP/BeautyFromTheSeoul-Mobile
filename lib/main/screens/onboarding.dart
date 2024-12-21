@@ -46,26 +46,25 @@ class ConcentricAnimationOnboarding extends StatelessWidget {
         colors: pages.map((p) => p.bgColor).toList(),
         radius: screenWidth * 0.08,
         nextButtonBuilder: (context) => Padding(
-          padding: const EdgeInsets.only(left: 3), // Visual center
+          padding: const EdgeInsets.only(left: 3), 
           child: Icon(
             Icons.navigate_next,
             size: screenWidth * 0.08,
             
           ),
         ),
-        itemCount: pages.length,  // Now 5 screens including logo
+        itemCount: pages.length,  
         onFinish: () {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => const WelcomePage(),  // Go to WelcomePage
+              builder: (context) => const WelcomePage(),  
             ),
           );
         },
         itemBuilder: (index) {
           final page = pages[index];
 
-          // If it's the first page, show the logo screen
           if (index == 0) {
             return SafeArea(
               child: Column(
@@ -80,7 +79,6 @@ class ConcentricAnimationOnboarding extends StatelessWidget {
             );
           }
 
-          // Otherwise, show the regular onboarding pages
           return SafeArea(
             child: _Page(page: page),
           );
@@ -116,7 +114,7 @@ class _Page extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (page.icon != null)  // Show icon only if it's not the logo screen
+        if (page.icon != null)  
           Container(
             padding: const EdgeInsets.all(16.0),
             margin: const EdgeInsets.all(16.0),
