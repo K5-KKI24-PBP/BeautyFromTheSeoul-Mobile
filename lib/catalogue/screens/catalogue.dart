@@ -11,7 +11,9 @@ import 'dart:convert';
 
 class CataloguePage extends StatefulWidget {
   final bool isStaff;
-  const CataloguePage({super.key, this.isStaff = false});
+  final String? filterProductType;
+
+  const CataloguePage({super.key, this.isStaff = false, this.filterProductType});
 
   @override
   _CataloguePageState createState() => _CataloguePageState();
@@ -32,7 +34,8 @@ class _CataloguePageState extends State<CataloguePage> {
   void initState() {
     super.initState();
     _checkUserRole();
-    fetchProducts();
+    fetchProducts(type: widget.filterProductType);
+    // fetchProducts();
     fetchFavoriteProducts();
   }
 

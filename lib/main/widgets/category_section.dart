@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:beauty_from_the_seoul_mobile/catalogue/screens/catalogue.dart';
 
 class CategorySection extends StatelessWidget {
   const CategorySection({super.key});
@@ -38,12 +39,24 @@ class CategorySection extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: categories.map((category) {
-                return _buildCategoryCard(
-                  category['title']!,
-                  category['image']!,
-                  category['color']!,
-                  cardWidth,
-                  cardHeight,
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CataloguePage(
+                          filterProductType: category['title'],  
+                        ),
+                      ),
+                    );
+                  },
+                  child: _buildCategoryCard(
+                    category['title']!,
+                    category['image']!,
+                    category['color']!,
+                    cardWidth,
+                    cardHeight,
+                  ),
                 );
               }).toList(),
             ),

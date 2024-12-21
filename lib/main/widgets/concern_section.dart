@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:beauty_from_the_seoul_mobile/catalogue/screens/catalogue.dart';
 
 class SkinConcernSection extends StatelessWidget {
   const SkinConcernSection({super.key});
@@ -8,31 +9,30 @@ class SkinConcernSection extends StatelessWidget {
     List<Map<String, dynamic>> concerns = [
       {
         "title": "Dark Circles",
-        "description":
-            "Brighten your under-eye area with our targeted treatments.",
+        "type": "Eye Treatment",
+        "description": "Brighten your under-eye area with our targeted treatments.",
         "color": const Color(0xff9fc6ff),
         "image": 'images/dark_circles.png',
       },
       {
         "title": "Acne",
-        "description":
-            "Fight breakouts effectively with our specially formulated solutions for clearer skin.",
+        "type": "Other Spot Treatments",
+        "description": "Fight breakouts effectively with our specially formulated solutions for clearer skin.",
         "color": const Color(0xffffc03e),
         "image": 'images/acne.png',
       },
       {
         "title": "Dry Lips",
-        "description":
-            "Deeply nourish and hydrate your lips to restore its natural moisture balance.",
+        "type": "Lip Treatment",
+        "description": "Deeply nourish and hydrate your lips to restore its natural moisture balance.",
         "color": const Color(0xffccc2fe),
         "image": 'images/dry_lips.png',
       },
     ];
 
-    // Set card dimensions based on screen height but make width greater
     double screenHeight = MediaQuery.of(context).size.height;
-    double cardHeight = screenHeight * 0.4;  // Set a consistent height
-    double cardWidth = cardHeight * 1.2;     // Width is 1.2x the height
+    double cardHeight = screenHeight * 0.4;
+    double cardWidth = cardHeight * 1.2;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 24.0),
@@ -70,13 +70,26 @@ class SkinConcernSection extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: concerns.map((concern) {
-                return _buildConcernCard(
-                  concern['title']!,
-                  concern['description']!,
-                  concern['color']!,
-                  concern['image']!,
-                  cardWidth,
-                  cardHeight,
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CataloguePage(
+                          filterProductType: concern['type'], 
+                        ),
+                      ),
+                    );
+                  },
+                  child: _buildConcernCard(
+                    concern['title']!,
+                    concern['type']!,
+                    concern['description']!,
+                    concern['color']!,
+                    concern['image']!,
+                    cardWidth,
+                    cardHeight,
+                  ),
                 );
               }).toList(),
             ),
@@ -86,8 +99,7 @@ class SkinConcernSection extends StatelessWidget {
     );
   }
 
-  Widget _buildConcernCard(
-      String title, String description, Color color, String imagePath, double width, double height) {
+  Widget _buildConcernCard(String title, String type, String description, Color color, String imagePath, double width, double height) {
     return Container(
       width: width,
       height: height,
@@ -102,7 +114,7 @@ class SkinConcernSection extends StatelessWidget {
             borderRadius: const BorderRadius.vertical(top: Radius.circular(16.0)),
             child: Image.asset(
               imagePath,
-              height: height * 0.6,  // Scales based on card height
+              height: height * 0.6,
               fit: BoxFit.cover,
             ),
           ),
