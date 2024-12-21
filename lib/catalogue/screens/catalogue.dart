@@ -44,24 +44,36 @@ class _CataloguePageState extends State<CataloguePage> {
     });
   }
 
-  Future<void> fetchProducts(
-      {String? brand, String? type, String? sortBy}) async {
+  Future<void> fetchProducts({
+    String? brand,
+    String? type,
+    String? sortBy,
+  }) async {
     try {
-      final response = await http.get(
-        Uri.parse(
-            'https://beauty-from-the-seoul.vercel.app/catalogue/get_product/'),
-      );
+      // Add filters and sorting parameters to the URL or request body
+      String url =
+          'https://beauty-from-the-seoul.vercel.app/catalogue/get_product/';
+
+      Map<String, String> queryParams = {};
+      if (brand != null) queryParams['brand'] = brand;
+      if (type != null) queryParams['type'] = type;
+      // if (sortBy != null) queryParams['sortBy'] = sortBy;
+
+      // Create the URL with query parameters
+      Uri uri = Uri.parse(url).replace(queryParameters: queryParams);
+
+      final response = await http.get(uri);
 
       if (response.statusCode == 200) {
         // Check if the widget is still mounted before calling setState()
         if (mounted) {
           setState(() {
-            products = productsFromJson(response.body);
+            products = productsFromJson(response
+                .body); // Assuming productsFromJson is already implemented
             isLoading = false;
           });
         }
       } else {
-        // Check if the widget is still mounted before calling setState()
         if (mounted) {
           setState(() {
             error = 'Failed to load products';
@@ -70,7 +82,6 @@ class _CataloguePageState extends State<CataloguePage> {
         }
       }
     } catch (e) {
-      // Check if the widget is still mounted before calling setState()
       if (mounted) {
         setState(() {
           error = 'Network error occurred';
@@ -90,33 +101,32 @@ class _CataloguePageState extends State<CataloguePage> {
     }
   }
 
-Future<void> confirmDelete(String productId) async {
-  final shouldDelete = await showDialog<bool>(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Confirm Deletion'),
-        content: const Text('Are you sure you want to delete this product?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete'),
-          ),
-        ],
-      );
-    },
-  );
+  Future<void> confirmDelete(String productId) async {
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Deletion'),
+          content: const Text('Are you sure you want to delete this product?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
 
-  if (shouldDelete == true) {
-    await deleteProduct(productId);
-    await fetchProducts();
+    if (shouldDelete == true) {
+      await deleteProduct(productId);
+      await fetchProducts();
+    }
   }
-}
-
 
   Future<void> fetchFavoriteProducts() async {
     final url = Uri.parse(
@@ -224,9 +234,12 @@ Future<void> confirmDelete(String productId) async {
                 context: context,
                 builder: (context) {
                   return FilterProductsWidget(
-                    onFilterApply: (brand, type, sortBy) {
+                    onFilterApply: (brand, type) {
                       // Apply filter when filter is applied
-                      fetchProducts(brand: brand, type: type, sortBy: sortBy);
+                      fetchProducts(
+                        brand: brand,
+                        type: type,
+                      );
                     },
                   );
                 },
@@ -264,7 +277,8 @@ Future<void> confirmDelete(String productId) async {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => EditProductForm(productId: product.pk),
+                            builder: (context) =>
+                                EditProductForm(productId: product.pk),
                           ),
                         ).then((result) {
                           if (result == true) {
@@ -277,22 +291,6 @@ Future<void> confirmDelete(String productId) async {
                 ),
       bottomNavigationBar: const Material3BottomNav(),
       // Add a FAB for adding products (optional)
-      floatingActionButton: isStaff
-          ? FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AddProductPage(),
-                  ),
-                ).then((_) {
-                  fetchProducts(); // Refresh the products
-                });
-              },
-              tooltip: 'Add Product',
-              child: const Icon(Icons.add),
-            )
-          : null, // Show FAB only for staff
     );
   }
 }
