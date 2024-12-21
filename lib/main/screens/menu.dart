@@ -99,7 +99,6 @@ abstract class BaseMenuState<T extends StatefulWidget> extends State<T> {
   }
 }
 
-// Reusable Ad Carousel Widget
 class AdCarousel extends StatelessWidget {
   final List<AdEntry> ads;
   final double screenWidth;
@@ -118,7 +117,7 @@ class AdCarousel extends StatelessWidget {
   Widget build(BuildContext context) {
     return CarouselSlider(
       items: [
-        _buildImageSlide('images/logo.png', screenWidth),  // Logo Slide
+        _buildImageSlide('images/logo.png', screenWidth),  
         ...ads.map(
           (ad) => GestureDetector(
             onLongPress: isAdmin ? () => onLongPress!(ad) : null,
@@ -192,6 +191,7 @@ void showAdSubmissionDialog(BuildContext context, Function(String, String) onSub
     },
   );
 }
+
 
 class CustomerMenu extends StatefulWidget {
   const CustomerMenu({super.key});
@@ -279,6 +279,85 @@ class _AdminMenuState extends BaseMenuState<AdminMenu> {
     }
   }
 
+  Future<void> editAd(String adId, String brandName, String imageUrl) async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://localhost:8000/ads/edit-ad/$adId/'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'brand_name': brandName,
+          'image': imageUrl,
+        }),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Ad updated successfully')),
+        );
+        fetchAds(); 
+      } else {
+        final responseBody = jsonDecode(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(responseBody['message'] ?? 'Failed to update ad')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
+  void showEditAdDialog(BuildContext context, AdEntry ad) {
+    final brandNameController = TextEditingController(text: ad.fields.brandName);
+    final imageUrlController = TextEditingController(text: ad.fields.image);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Edit Ad'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: brandNameController,
+                decoration: const InputDecoration(labelText: 'Brand Name'),
+              ),
+              TextField(
+                controller: imageUrlController,
+                decoration: const InputDecoration(labelText: 'Image URL'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (brandNameController.text.isEmpty || imageUrlController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Please fill in all fields')),
+                  );
+                } else {
+                  editAd(ad.pk, brandNameController.text, imageUrlController.text);
+                  Navigator.of(context).pop();
+                }
+              },
+              child: const Text('Save Changes'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void showAdminActionsDialog(AdEntry ad) {
     showDialog(
       context: context,
@@ -293,6 +372,10 @@ class _AdminMenuState extends BaseMenuState<AdminMenu> {
             TextButton(
               onPressed: () => deleteAd(ad.pk),
               child: const Text('Delete'),
+            ),
+            TextButton(
+              onPressed: () => showEditAdDialog(context, ad),
+              child: const Text('Edit'),
             ),
           ],
         );

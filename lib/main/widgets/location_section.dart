@@ -9,28 +9,28 @@ class LocationSection extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Map<String, dynamic>> storeLocations = [
       {
-        "name": "Olive Young",
-        "image": 'images/store1.png',
+        "name": "Myeongdong",
+        "image": 'images/myeongdong.png',
         "borderColor": const Color(0xff9fc6ff),
         "mapsUrl": "https://www.google.com/maps?cid=9929880658946518724",
       },
       {
-        "name": "La Nueva",
-        "image": 'images/store_lanueva.png',
+        "name": "Gangnam",
+        "image": 'images/gangnam.png',
         "borderColor": const Color(0xffffc03e),
-        "mapsUrl": "https://maps.app.goo.gl/LaNuevaLocation",
+        "mapsUrl": "https://maps.google.com/?cid=5590760012686468635n",
       },
       {
-        "name": "Klavuu",
-        "image": 'images/store_klavuu.png',
+        "name": "Jung",
+        "image": 'images/jung.png',
         "borderColor": const Color(0xffccc2fe),
-        "mapsUrl": "https://maps.app.goo.gl/KlavuuLocation",
+        "mapsUrl": "https://maps.google.com/?cid=13851289114136110333",
       },
       {
-        "name": "All Mask Story",
-        "image": 'images/store_allmaskstory.png',
+        "name": "Seocho",
+        "image": 'images/seocho.png',
         "borderColor": const Color(0xff9fc6ff),
-        "mapsUrl": "https://maps.app.goo.gl/AllMaskStoryLocation",
+        "mapsUrl": "https://maps.google.com/?cid=7114928757871534792n",
       },
     ];
 
@@ -46,7 +46,7 @@ class LocationSection extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  "Stores Near You",
+                  "Browse Locations Near You",
                   style: TextStyle(
                     fontFamily: 'Laurasia',
                     fontSize: 28,
@@ -123,30 +123,47 @@ class LocationSection extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            // Background Image
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12.0),
-              child: Image.asset(
-                imagePath,
-                width: double.infinity,
-                height: double.infinity,
-                fit: BoxFit.cover,
+            Positioned.fill(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12.0),
+                child: Image.asset(
+                  imagePath,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-            // Black Gradient Overlay
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12.0),
+            
+            Positioned.fill(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color(0xff071a58).withOpacity(0.5),  
+                        Colors.transparent,
+                      ],
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            
+            Positioned(
+              bottom: 16,
+              left: 0,
+              right: 0,
               child: Container(
-                width: double.infinity,
-                height: double.infinity,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      const Color(0xff071a58).withOpacity(0.5),  // Darker at bottom
-                      Colors.transparent,
-                    ],
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
+                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                alignment: Alignment.center,
+                child: Text(
+                  name,
+                  style: const TextStyle(
+                    fontFamily: 'Laurasia',
+                    fontSize: 18,
+                    color: Colors.white,
                   ),
                 ),
               ),
@@ -156,5 +173,6 @@ class LocationSection extends StatelessWidget {
       ),
     );
   }
+
 
 }
