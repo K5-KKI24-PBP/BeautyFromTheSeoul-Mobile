@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class FilterProductsWidget extends StatefulWidget {
-  final Function(String?, String?, String?) onFilterApply;
+  final Function(String?, String?) onFilterApply;
 
   const FilterProductsWidget({
     super.key,
@@ -17,11 +17,9 @@ class FilterProductsWidget extends StatefulWidget {
 class _FilterProductsWidgetState extends State<FilterProductsWidget> {
   String? selectedBrand;
   String? selectedProductType;
-  String? selectedSortBy;
 
   List<String> brands = [];
   List<String> productTypes = [];
-  List<String> sortByOptions = ['Name', 'Price Ascending', 'Price Descending'];
 
   bool isLoading = true;
   String? error;
@@ -29,32 +27,28 @@ class _FilterProductsWidgetState extends State<FilterProductsWidget> {
   @override
   void initState() {
     super.initState();
-    fetchFilterData();
+    fetchFilterData(); // Load initial filter data
   }
 
   // Fetch brands and product types from the server
   Future<void> fetchFilterData() async {
     try {
-      final response = await http.post(
+      final response = await http.get(
         Uri.parse(
-            'https://beauty-from-the-seoul.vercel.app/catalogue/filter_products_flutter/'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          // Send any required fields.
-          // Example: If the API expects some data, send it here.
-          "param1": "value1",
-          "param2": "value2",
-        }),
+          'https://beauty-from-the-seoul.vercel.app/catalogue/filter_products_flutter/'
+          '?product_brand=${selectedBrand ?? ""}'
+          '&product_type=${selectedProductType ?? ""}',
+        ),
       );
-
-      print('Response Status: ${response.statusCode}');
-      print('Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         setState(() {
-          brands = List<String>.from(data['brands'] ?? []);
-          productTypes = List<String>.from(data['product_types'] ?? []);
+          // Here you should fill the brands and product types as needed
+          // assuming the API sends them in the response.
+          brands = List<String>.from(data['brands'] ?? []); // Update brands
+          productTypes = List<String>.from(
+              data['product_types'] ?? []); // Update product types
           isLoading = false;
         });
       } else {
@@ -83,8 +77,8 @@ class _FilterProductsWidgetState extends State<FilterProductsWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (error != null) ...[
-                    Text(error!, style: const TextStyle(color: Colors.red)),
-                    const SizedBox(height: 8),
+                    Text(error!, style: TextStyle(color: Colors.red)),
+                    SizedBox(height: 8),
                   ],
                   const Text('Select Brand:'),
                   DropdownButton<String>(
@@ -95,6 +89,7 @@ class _FilterProductsWidgetState extends State<FilterProductsWidget> {
                       setState(() {
                         selectedBrand = newValue;
                       });
+                      fetchFilterData(); // Reload filters based on new selection
                     },
                     items: brands.map<DropdownMenuItem<String>>((String brand) {
                       return DropdownMenuItem<String>(
@@ -113,31 +108,13 @@ class _FilterProductsWidgetState extends State<FilterProductsWidget> {
                       setState(() {
                         selectedProductType = newValue;
                       });
+                      fetchFilterData(); // Reload filters based on new selection
                     },
                     items: productTypes
                         .map<DropdownMenuItem<String>>((String type) {
                       return DropdownMenuItem<String>(
                         value: type,
                         child: Text(type),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text('Sort By:'),
-                  DropdownButton<String>(
-                    value: selectedSortBy,
-                    hint: const Text('-- Select Sort Option --'),
-                    isExpanded: true,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectedSortBy = newValue;
-                      });
-                    },
-                    items: sortByOptions
-                        .map<DropdownMenuItem<String>>((String sort) {
-                      return DropdownMenuItem<String>(
-                        value: sort,
-                        child: Text(sort),
                       );
                     }).toList(),
                   ),
@@ -154,8 +131,10 @@ class _FilterProductsWidgetState extends State<FilterProductsWidget> {
         ElevatedButton(
           onPressed: () {
             widget.onFilterApply(
-                selectedBrand, selectedProductType, selectedSortBy);
-            Navigator.pop(context); // Close the modal
+                selectedBrand ?? '', // Brand (empty string if not selected)
+                selectedProductType ??
+                    ''); // Product Type (empty string if not selected)
+            Navigator.pop(context); // Close the modal after applying filter
           },
           child: const Text('Apply Filter'),
         ),
