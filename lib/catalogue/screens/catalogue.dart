@@ -49,45 +49,49 @@ class _CataloguePageState extends State<CataloguePage> {
     String? type,
     String? sortBy,
   }) async {
+    setState(() {
+      isLoading = true;
+      error = null;
+    });
+
     try {
-      // Add filters and sorting parameters to the URL or request body
-      String url =
-          'https://beauty-from-the-seoul.vercel.app/catalogue/get_product/';
-
-      Map<String, String> queryParams = {};
-      if (brand != null) queryParams['brand'] = brand;
-      if (type != null) queryParams['type'] = type;
-      // if (sortBy != null) queryParams['sortBy'] = sortBy;
-
-      // Create the URL with query parameters
-      Uri uri = Uri.parse(url).replace(queryParameters: queryParams);
-
-      final response = await http.get(uri);
+      final response = await http.get(
+        Uri.parse('https://beauty-from-the-seoul.vercel.app/catalogue/get_product/'),
+      );
 
       if (response.statusCode == 200) {
-        // Check if the widget is still mounted before calling setState()
-        if (mounted) {
-          setState(() {
-            products = productsFromJson(response
-                .body); // Assuming productsFromJson is already implemented
-            isLoading = false;
-          });
-        }
-      } else {
-        if (mounted) {
-          setState(() {
-            error = 'Failed to load products';
-            isLoading = false;
-          });
-        }
-      }
-    } catch (e) {
-      if (mounted) {
+        if (!mounted) return;
+        
+        // Parse all products first
+        List<Products> allProducts = productsFromJson(response.body);
+        
+        // Apply filters client-side
+        List<Products> filteredProducts = allProducts.where((product) {
+          bool matchesBrand = brand == null || brand.isEmpty || 
+                            product.fields.productBrand.toLowerCase() == brand.toLowerCase();
+          bool matchesType = type == null || type.isEmpty || 
+                            product.fields.productType.toLowerCase() == type.toLowerCase();
+          return matchesBrand && matchesType;
+        }).toList();
+
+        print('Total products: ${allProducts.length}');
+        print('Filtered products: ${filteredProducts.length}');
+        print('Applied filters - Brand: $brand, Type: $type');
+
         setState(() {
-          error = 'Network error occurred';
+          products = filteredProducts;
           isLoading = false;
         });
+      } else {
+        throw Exception('Failed to load products: ${response.statusCode}');
       }
+    } catch (e) {
+      print('Error fetching products: $e');
+      if (!mounted) return;
+      setState(() {
+        error = 'Failed to load products: $e';
+        isLoading = false;
+      });
     }
   }
 
@@ -229,20 +233,17 @@ class _CataloguePageState extends State<CataloguePage> {
             icon: const Icon(Icons.filter_alt),
             tooltip: 'Filter Products',
             onPressed: () {
-              // Open filter modal
               showDialog(
                 context: context,
-                builder: (context) {
-                  return FilterProductsWidget(
-                    onFilterApply: (brand, type) {
-                      // Apply filter when filter is applied
-                      fetchProducts(
-                        brand: brand,
-                        type: type,
-                      );
-                    },
-                  );
-                },
+                builder: (context) => FilterProductsWidget(
+                  onFilterApply: (brand, type) {
+                    print('Filter applied - Brand: $brand, Type: $type'); // Debug print
+                    fetchProducts(
+                      brand: brand,
+                      type: type,
+                    );
+                  },
+                ),
               );
             },
           ),
