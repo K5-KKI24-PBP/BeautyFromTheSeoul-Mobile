@@ -35,7 +35,7 @@ class _FilterProductsWidgetState extends State<FilterProductsWidget> {
     try {
       final response = await http.get(
         Uri.parse(
-          'http://127.0.0.1:8000/catalogue/filter_products_flutter/'
+          'https://beauty-from-the-seoul.vercel.app/catalogue/filter_products_flutter/'
           '?product_brand=${selectedBrand ?? ""}'
           '&product_type=${selectedProductType ?? ""}',
         ),
