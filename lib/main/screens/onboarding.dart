@@ -36,7 +36,7 @@ final pages = [
 ];
 
 class ConcentricAnimationOnboarding extends StatelessWidget {
-  const ConcentricAnimationOnboarding({Key? key}) : super(key: key);
+  const ConcentricAnimationOnboarding({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +105,7 @@ class PageData {
 class _Page extends StatelessWidget {
   final PageData page;
 
-  const _Page({Key? key, required this.page}) : super(key: key);
+  const _Page({required this.page});
 
   @override
   Widget build(BuildContext context) {
