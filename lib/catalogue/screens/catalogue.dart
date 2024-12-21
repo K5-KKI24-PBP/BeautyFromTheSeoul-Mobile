@@ -209,18 +209,20 @@ class _CataloguePageState extends State<CataloguePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-         title: const Text('Browse Our Extensive Catalogue',
-            style: TextStyle(color: Colors.white,
+        title: const Text(
+          'Browse Our Extensive Catalogue',
+          style: TextStyle(
+            color: Colors.white,
             fontSize: 24,
-            fontWeight: FontWeight.bold
-            )
+            fontWeight: FontWeight.bold,
+          ),
         ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             color: Color(0xFF071a58), // Blue background color
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(8), 
-              topRight: Radius.circular(8)
+              topLeft: Radius.circular(8),
+              topRight: Radius.circular(8),
             ),
           ),
         ),
@@ -250,7 +252,6 @@ class _CataloguePageState extends State<CataloguePage> {
                 context: context,
                 builder: (context) => FilterProductsWidget(
                   onFilterApply: (brand, type) {
-                    print('Filter applied - Brand: $brand, Type: $type'); // Debug print
                     fetchProducts(
                       brand: brand,
                       type: type,
@@ -262,49 +263,67 @@ class _CataloguePageState extends State<CataloguePage> {
           ),
         ],
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : error != null
-              ? Center(child: Text(error!))
-              : GridView.builder(
-                  padding: const EdgeInsets.all(8),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.7,
-                    mainAxisSpacing: 8,
-                    crossAxisSpacing: 8,
-                  ),
-                  itemCount: products.length,
-                  itemBuilder: (context, index) {
-                    final product = products[index];
-                    return ProductCard(
-                      product: product,
-                      isStaff: isStaff,
-                      isFavorite: favoriteProductIds.contains(product.pk),
-                      onFavoriteToggle: () {
-                        toggleFavorite(product.pk); // Toggle favorite status
-                      },
-                      onDelete: () {
-                        confirmDelete(product.pk); // Delete the product
-                      },
-                      onEdit: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                EditProductForm(productId: product.pk),
-                          ),
-                        ).then((result) {
-                          if (result == true) {
-                            fetchProducts(); // Refresh product list after editing
-                          }
-                        });
-                      },
-                    );
-                  },
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width, // Full screen width
+              height: 200, // Adjust height as needed
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('images/products.png'), // Replace with your image path
+                  fit: BoxFit.cover, // Ensures the image fills the container
                 ),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+            // Products grid
+            GridView.builder(
+              padding: const EdgeInsets.all(8),
+              shrinkWrap: true, // Shrink the GridView to fit content
+              physics: const NeverScrollableScrollPhysics(), // Disable GridView's scrolling
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.7,
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+              ),
+              itemCount: products.length,
+              itemBuilder: (context, index) {
+                final product = products[index];
+                return ProductCard(
+                  product: product,
+                  isStaff: isStaff,
+                  isFavorite: favoriteProductIds.contains(product.pk),
+                  onFavoriteToggle: () {
+                    toggleFavorite(product.pk); // Toggle favorite status
+                  },
+                  onDelete: () {
+                    confirmDelete(product.pk); // Delete the product
+                  },
+                  onEdit: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            EditProductForm(productId: product.pk),
+                      ),
+                    ).then((result) {
+                      if (result == true) {
+                        fetchProducts(); // Refresh product list after editing
+                      }
+                    });
+                  },
+                );
+              },
+            ),
+          ],
+        ),
+      ),
       bottomNavigationBar: const Material3BottomNav(),
-      // Add a FAB for adding products (optional)
     );
   }
+
 }
