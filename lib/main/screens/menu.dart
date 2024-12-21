@@ -27,7 +27,7 @@ abstract class BaseMenuState<T extends StatefulWidget> extends State<T> {
   Future<void> fetchAds() async {
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:8000//ads/'),
+        Uri.parse('https://beauty-from-the-seoul.vercel.app/ads/'),
       );
 
       print(response.body);
@@ -50,7 +50,7 @@ abstract class BaseMenuState<T extends StatefulWidget> extends State<T> {
   Future<void> submitAd(String brandName, String imageUrl) async {
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:8000//ads/submit/'),
+        Uri.parse('https://beauty-from-the-seoul.vercel.app/ads/submit/'),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -81,7 +81,7 @@ abstract class BaseMenuState<T extends StatefulWidget> extends State<T> {
   Future<void> logout(BuildContext context) async {
     final request = context.read<CookieRequest>();
     final response = await request.logout(
-      "http://localhost:8000//auth/logout-flutter/",
+      "https://beauty-from-the-seoul.vercel.app/auth/logout-flutter/",
     );
 
     if (response['status']) {
@@ -253,7 +253,7 @@ class AdminMenu extends StatefulWidget {
 class _AdminMenuState extends BaseMenuState<AdminMenu> {
     Future<void> approveAd(String adId) async {
     final response = await http.post(
-      Uri.parse('http://localhost:8000//ads/approve/$adId/'),
+      Uri.parse('https://beauty-from-the-seoul.vercel.app/ads/approve/$adId/'),
     );
 
     if (response.statusCode == 200) {
@@ -267,7 +267,7 @@ class _AdminMenuState extends BaseMenuState<AdminMenu> {
 
   Future<void> deleteAd(String adId) async {
     final response = await http.delete(
-      Uri.parse('http://localhost:8000//ads/delete/$adId/'),
+      Uri.parse('https://beauty-from-the-seoul.vercel.app/ads/delete/$adId/'),
     );
 
     if (response.statusCode == 200) {

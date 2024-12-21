@@ -32,28 +32,60 @@ class _FilterProductsWidgetState extends State<FilterProductsWidget> {
 
   // Fetch brands and product types from the server
   Future<void> fetchFilterData() async {
+    setState(() {
+      isLoading = true;
+      error = null;
+    });
+
     try {
       final response = await http.get(
         Uri.parse(
-          'https://beauty-from-the-seoul.vercel.app/catalogue/filter_products_flutter/'
-          '?product_brand=${selectedBrand ?? ""}'
-          '&product_type=${selectedProductType ?? ""}',
+          'https://beauty-from-the-seoul.vercel.app/catalogue/get_product/',  // Changed to product endpoint
         ),
       );
 
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final List<dynamic> productsData = jsonDecode(response.body);
+        
+        // Extract unique brands and types from products
+        Set<String> brandSet = {};
+        Set<String> typeSet = {};
+
+        for (var product in productsData) {
+          if (product['fields'] != null) {
+            final fields = product['fields'];
+            if (fields['product_brand'] != null) {
+              brandSet.add(fields['product_brand']);
+            }
+            if (fields['product_type'] != null) {
+              typeSet.add(fields['product_type']);
+            }
+          }
+        }
+
         setState(() {
-          // Here you should fill the brands and product types as needed
-          // assuming the API sends them in the response.
-          brands = List<String>.from(data['brands'] ?? []); // Update brands
-          productTypes = List<String>.from(
-              data['product_types'] ?? []); // Update product types
+          brands = brandSet.toList()..sort();
+          productTypes = typeSet.toList()..sort();
+
+          print('Loaded brands: $brands');
+          print('Loaded product types: $productTypes');
+
+          // Clear selections if they're not in the new lists
+          if (selectedBrand != null && !brands.contains(selectedBrand)) {
+            selectedBrand = null;
+          }
+          if (selectedProductType != null && !productTypes.contains(selectedProductType)) {
+            selectedProductType = null;
+          }
+
           isLoading = false;
         });
       } else {
         setState(() {
-          error = 'Failed to load filter data';
+          error = 'Failed to load filter data: ${response.statusCode}';
           isLoading = false;
         });
       }
@@ -85,56 +117,69 @@ class _FilterProductsWidgetState extends State<FilterProductsWidget> {
                     value: selectedBrand,
                     hint: const Text('-- Select Brand --'),
                     isExpanded: true,
+                    items: [
+                      const DropdownMenuItem<String>(
+                        value: null,
+                        child: Text('-- Select Brand --'),
+                      ),
+                      ...brands.map((String brand) {
+                        return DropdownMenuItem<String>(
+                          value: brand,
+                          child: Text(brand),
+                        );
+                      }).toList(),
+                    ],
                     onChanged: (String? newValue) {
                       setState(() {
                         selectedBrand = newValue;
                       });
-                      fetchFilterData(); // Reload filters based on new selection
                     },
-                    items: brands.map<DropdownMenuItem<String>>((String brand) {
-                      return DropdownMenuItem<String>(
-                        value: brand,
-                        child: Text(brand),
-                      );
-                    }).toList(),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 16),
                   const Text('Select Product Type:'),
                   DropdownButton<String>(
                     value: selectedProductType,
                     hint: const Text('-- Select Product Type --'),
                     isExpanded: true,
+                    items: [
+                      const DropdownMenuItem<String>(
+                        value: null,
+                        child: Text('-- Select Product Type --'),
+                      ),
+                      ...productTypes.map((String type) {
+                        return DropdownMenuItem<String>(
+                          value: type,
+                          child: Text(type),
+                        );
+                      }).toList(),
+                    ],
                     onChanged: (String? newValue) {
                       setState(() {
                         selectedProductType = newValue;
                       });
-                      fetchFilterData(); // Reload filters based on new selection
                     },
-                    items: productTypes
-                        .map<DropdownMenuItem<String>>((String type) {
-                      return DropdownMenuItem<String>(
-                        value: type,
-                        child: Text(type),
-                      );
-                    }).toList(),
                   ),
                 ],
               ),
             ),
       actions: [
         TextButton(
-          onPressed: () {
-            Navigator.pop(context); // Close the modal without applying filter
-          },
+          onPressed: () => Navigator.pop(context),
           child: const Text('Cancel'),
         ),
         ElevatedButton(
           onPressed: () {
-            widget.onFilterApply(
-                selectedBrand ?? '', // Brand (empty string if not selected)
-                selectedProductType ??
-                    ''); // Product Type (empty string if not selected)
-            Navigator.pop(context); // Close the modal after applying filter
+            // Only pass non-null values when actually selected
+            final brandValue = selectedBrand != null && selectedBrand != '-- Select Brand --' 
+                ? selectedBrand 
+                : null;
+            final typeValue = selectedProductType != null && selectedProductType != '-- Select Product Type --' 
+                ? selectedProductType 
+                : null;
+            
+            print('Applying filters - Brand: $brandValue, Type: $typeValue'); // Debug print
+            widget.onFilterApply(brandValue, typeValue);
+            Navigator.pop(context);
           },
           child: const Text('Apply Filter'),
         ),
