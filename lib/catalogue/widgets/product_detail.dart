@@ -21,7 +21,12 @@ class _ProductDetailState extends State<ProductDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.product.fields.productName),
+        title: Text(
+          widget.product.fields.productName,
+          style: const TextStyle(
+            fontFamily: 'Laurasia',
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -46,6 +51,7 @@ class _ProductDetailState extends State<ProductDetail> {
                         Text(
                           widget.product.fields.productName,
                           style: const TextStyle(
+                            fontFamily: 'Laurasia',
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
@@ -53,6 +59,7 @@ class _ProductDetailState extends State<ProductDetail> {
                         Text(
                           widget.product.fields.productBrand,
                           style: const TextStyle(
+                            fontFamily: 'TT',
                             color: Colors.grey,
                             fontSize: 16,
                           ),
@@ -74,6 +81,7 @@ class _ProductDetailState extends State<ProductDetail> {
               Text(
                 'Price: ₩${widget.product.fields.price.toStringAsFixed(2)}',  
                 style: const TextStyle(
+                  fontFamily: 'TT',
                   fontSize: 18,
                   color: Colors.red,
                 ),

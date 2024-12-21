@@ -209,8 +209,21 @@ class _CataloguePageState extends State<CataloguePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Browse Our Extensive Catalogue!'),
-        centerTitle: true,
+         title: const Text('Browse Our Extensive Catalogue',
+            style: TextStyle(color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold
+            )
+        ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            color: Color(0xFF071a58), // Blue background color
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(8), 
+              topRight: Radius.circular(8)
+            ),
+          ),
+        ),
         actions: [
           if (isStaff) // Show Add Product button only for staff
             IconButton(
