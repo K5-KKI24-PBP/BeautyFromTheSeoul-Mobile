@@ -9,6 +9,7 @@ class ProductCard extends StatelessWidget {
   final VoidCallback onFavoriteToggle; // Callback to handle favorite toggle
   final VoidCallback onDelete; // Callback for delete action
   final VoidCallback onEdit;
+
   const ProductCard({
     super.key,
     required this.product,
@@ -16,13 +17,14 @@ class ProductCard extends StatelessWidget {
     required this.isFavorite,
     required this.onFavoriteToggle,
     required this.onDelete,
-    required this.onEdit
+    required this.onEdit,
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 2,
+      margin: const EdgeInsets.all(8),
       child: GestureDetector(
         onTap: () {
           print(
@@ -35,18 +37,24 @@ class ProductCard extends StatelessWidget {
           );
         },
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Expanded(
+            Flexible(
               flex: 3,
-              child: Image.network(
-                product.fields.image,
-                fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) =>
-                    const Center(child: Icon(Icons.error)),
+              child: Container(
+                width: double.infinity,
+                alignment: Alignment.center,
+                child: Image.network(
+                  product.fields.image,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Center(child: Icon(Icons.error)),
+                ),
               ),
             ),
-            Expanded(
+            Flexible(
               flex: 2,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -85,24 +93,23 @@ class ProductCard extends StatelessWidget {
                       children: [
                         IconButton(
                           icon: Icon(
-                            isFavorite
-                                ? Icons.favorite
-                                : Icons.favorite_border,
+                            isFavorite ? Icons.favorite : Icons.favorite_border,
                             color: isFavorite ? Colors.red : Colors.grey,
                           ),
                           onPressed: onFavoriteToggle,
                         ),
-                        if (isStaff) // Show buttons only for staff
+                        if (isStaff)
                           Row(
                             children: [
                               IconButton(
-                                icon: const Icon(Icons.edit, color: Colors.blue),
-                                onPressed: onEdit
+                                icon:
+                                    const Icon(Icons.edit, color: Colors.blue),
+                                onPressed: onEdit,
                               ),
-                              
                               IconButton(
-                                icon: const Icon(Icons.delete, color: Colors.red),
-                                onPressed: onDelete
+                                icon:
+                                    const Icon(Icons.delete, color: Colors.red),
+                                onPressed: onDelete,
                               ),
                             ],
                           ),
