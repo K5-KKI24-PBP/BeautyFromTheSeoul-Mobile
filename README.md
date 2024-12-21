@@ -1,6 +1,12 @@
 # BEAUTY FROM THE SEOUL
+![Staging badge](https://github.com/K5-KKI24-PBP/BeautyFromTheSeoul-Mobile/actions/workflows/staging.yml/badge.svg)
+![Pre-release badge](https://github.com/K5-KKI24-PBP/BeautyFromTheSeoul-Mobile/actions/workflows/pre-release.yml/badge.svg)
+![Release badge](https://github.com/K5-KKI24-PBP/BeautyFromTheSeoul-Mobile/actions/workflows/release.yml/badge.svg)
+[![Build status](https://build.appcenter.ms/v0.1/apps/ace5c164-9e59-4ef5-987d-55af58bd9bd4/branches/main/badge)](https://appcenter.ms)
 ## APP LINK
-TBA
+[Releases](https://github.com/K5-KKI24-PBP/BeautyFromTheSeoul-Mobile/releases)
+Or
+[App Center](https://install.appcenter.ms/orgs/beautyfromtheseoul/apps/beautyfromtheseoul-mobile/distribution_groups/public)
 ## Group Members
 1. [Anindiyo Banu Prabasworo - 2306256236](https://github.com/skibidiyo)
 2. [Athazahra Nabila Ruby - 2306173113](https://github.com/thataruby)
