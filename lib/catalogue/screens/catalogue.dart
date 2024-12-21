@@ -85,11 +85,38 @@ class _CataloguePageState extends State<CataloguePage> {
       final response = await http.delete(Uri.parse(
           'https://beauty-from-the-seoul.vercel.app/catalogue/delete_product_flutter/$productId/'));
       print('Status Code: ${response.statusCode}');
-      print('Response Body: ${response.body}');
     } catch (e) {
       print('Error: $e');
     }
   }
+
+Future<void> confirmDelete(String productId) async {
+  final shouldDelete = await showDialog<bool>(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Confirm Deletion'),
+        content: const Text('Are you sure you want to delete this product?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete'),
+          ),
+        ],
+      );
+    },
+  );
+
+  if (shouldDelete == true) {
+    await deleteProduct(productId);
+    await fetchProducts();
+  }
+}
+
 
   Future<void> fetchFavoriteProducts() async {
     final url = Uri.parse(
@@ -231,16 +258,19 @@ class _CataloguePageState extends State<CataloguePage> {
                         toggleFavorite(product.pk); // Toggle favorite status
                       },
                       onDelete: () {
-                        deleteProduct(product.pk); // Delete the product
+                        confirmDelete(product.pk); // Delete the product
                       },
                       onEdit: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                EditProductForm(productId: product.pk),
+                            builder: (context) => EditProductForm(productId: product.pk),
                           ),
-                        );
+                        ).then((result) {
+                          if (result == true) {
+                            fetchProducts(); // Refresh product list after editing
+                          }
+                        });
                       },
                     );
                   },
