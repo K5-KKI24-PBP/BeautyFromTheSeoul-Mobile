@@ -26,7 +26,7 @@ class SkinConcernSection extends StatelessWidget {
         "type": "Lip Treatment",
         "description": "Deeply nourish and hydrate your lips to restore its natural moisture balance.",
         "color": const Color(0xffccc2fe),
-        "image": 'assets/images/dry_lips.png',
+        "image": 'images/dry_lips.png',
       },
     ];
 
@@ -35,7 +35,7 @@ class SkinConcernSection extends StatelessWidget {
     double cardWidth = cardHeight * 1.2;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 24.0),
+      padding: const EdgeInsets.symmetric(vertical: 14.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -103,7 +103,7 @@ class SkinConcernSection extends StatelessWidget {
   Widget _buildConcernCard(String title, String type, String description, Color color, String imagePath, double width, double height) {
     return Container(
       width: width,
-      height: height,
+      height: height * 0.8,
       margin: const EdgeInsets.symmetric(horizontal: 12.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16.0),
@@ -115,7 +115,7 @@ class SkinConcernSection extends StatelessWidget {
             borderRadius: const BorderRadius.vertical(top: Radius.circular(16.0)),
             child: Image.asset(
               imagePath,
-              height: height * 0.6,
+              height: height * 0.4,
               fit: BoxFit.cover,
             ),
           ),

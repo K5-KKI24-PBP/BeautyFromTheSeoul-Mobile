@@ -9,7 +9,7 @@ class AdSubmissionSection extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double cardWidth = screenWidth * 0.9;
-    double cardHeight = cardWidth * 0.5;
+    double cardHeight = screenWidth * 0.3;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 32.0, horizontal: 16.0),
@@ -39,7 +39,6 @@ class AdSubmissionSection extends StatelessWidget {
               ),
             ),
             
-            // Gradient Overlay for Better Text Visibility
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16.0),
@@ -54,7 +53,6 @@ class AdSubmissionSection extends StatelessWidget {
               ),
             ),
 
-            // Text and Button Overlaid on Image
             Padding(
               padding: const EdgeInsets.all(24.0),
               child: Column(
@@ -86,22 +84,26 @@ class AdSubmissionSection extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
+                      minimumSize: const Size(150, 40), 
                     ),
                     onPressed: () => onAdSubmit(context),
                     child: const Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 12),
+                        horizontal: 12,  
+                        vertical: 8,     
+                      ),
                       child: Text(
                         "Submit Your Ad Here",
                         style: TextStyle(
                           fontFamily: 'TT',
-                          fontSize: 16,
+                          fontSize: 14,  
                           color: Color(0xff071a58),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                  ),
+                  )
+
                 ],
               ),
             ),

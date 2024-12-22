@@ -13,6 +13,11 @@ class PromotionEventSection extends StatelessWidget {
         "image": 'assets/images/promo1.png',
       },
       {
+        "title": "Thata's Birthday",
+        "discount": "80%",
+        "image": 'assets/images/promo3.png',
+      },
+      {
         "title": "Kayla's Birthday",
         "discount": "100%",
         "image": 'assets/images/promo2.png',

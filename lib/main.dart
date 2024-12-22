@@ -22,6 +22,8 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Beauty From The Seoul',
         theme: ThemeData(
+          fontFamily: 'TT',
+          scaffoldBackgroundColor: const Color(0xFFfcfaf3),
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(
             seedColor: const Color(0xFF071a58),
@@ -31,6 +33,9 @@ class MyApp extends StatelessWidget {
             labelTextStyle: WidgetStateProperty.all(
               const TextStyle(color: Colors.white),
             ),
+          ),
+          appBarTheme: const AppBarTheme(
+            iconTheme: IconThemeData(color: Colors.white),
           ),
         ),
         localizationsDelegates: const [
