@@ -172,7 +172,19 @@ class _FavoritePageState extends State<FavoritePage> {
       length: categories.length,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('My Favorite Products'),
+          title: const Text(
+            'Store Locator',
+            style: TextStyle(
+              fontFamily: 'Laurasia',
+              color: Colors.white,
+              fontSize: 24,
+            ),
+          ),
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              color: Color(0xFF071a58), 
+            ),
+          ),
           bottom: TabBar(
             isScrollable: isMobileView,
             labelColor: Colors.black,

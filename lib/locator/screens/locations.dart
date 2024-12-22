@@ -169,52 +169,64 @@ class _LocatorPageState extends State<LocatorPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Store Locator'),
+        title: const Text(
+          'My Favorite Products',
+          style: TextStyle(
+            fontFamily: 'Laurasia',
+            color: Colors.white,
+            fontSize: 24,
+          ),
+        ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            color: Color(0xFF071a58), 
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Stack(
-            children: [
-              Container(
-                height: 250,
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('images/locator.png'),  
-                    fit: BoxFit.cover,
+              children: [
+                Container(
+                  height: 250,
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('images/locator.png'),  
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-              ),
-              const Positioned(
-                top: 75,
-                left: 0,
-                right: 0,
-                child: Column(
-                  children: [
-                    Text(
-                      'Store Locator',
-                      style: TextStyle(
-                        fontSize: 48,
-                        color: Colors.white,
-                        fontFamily: 'Laurasia',
+                const Positioned(
+                  top: 75,
+                  left: 0,
+                  right: 0,
+                  child: Column(
+                    children: [
+                      Text(
+                        'Store Locator',
+                        style: TextStyle(
+                          fontSize: 48,
+                          color: Colors.white,
+                          fontFamily: 'Laurasia',
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Find a skincare store near you!',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
-                        fontFamily: 'TT',
+                      SizedBox(height: 10),
+                      Text(
+                        'Find a skincare store near you!',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                          fontFamily: 'TT',
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
             const SizedBox(height: 40),
             const Text(
               'Check Out Our Seoul Skincare Stores Map!',

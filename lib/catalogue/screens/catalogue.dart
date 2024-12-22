@@ -12,9 +12,10 @@ import 'dart:convert';
 class CataloguePage extends StatefulWidget {
   final bool isStaff;
   final String? filterProductType;
+  final String? filterBrand;
 
   const CataloguePage(
-      {super.key, this.isStaff = false, this.filterProductType});
+      {super.key, this.isStaff = false, this.filterProductType, this.filterBrand});
 
   @override
   _CataloguePageState createState() => _CataloguePageState();
@@ -35,7 +36,7 @@ class _CataloguePageState extends State<CataloguePage> {
   void initState() {
     super.initState();
     _checkUserRole();
-    fetchProducts(type: widget.filterProductType);
+    fetchProducts(brand: widget.filterBrand, type: widget.filterProductType);
     // fetchProducts();
     fetchFavoriteProducts();
   }
@@ -233,9 +234,9 @@ class _CataloguePageState extends State<CataloguePage> {
           child: Text(
             'Products',
             style: TextStyle(
+              fontFamily: 'Laurasia',
               color: Colors.white,
               fontSize: screenWidth < 300 ? 18 : 24,
-              fontWeight: FontWeight.bold,
             ),
           ),
         ),
@@ -287,26 +288,42 @@ class _CataloguePageState extends State<CataloguePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Stack(
-              alignment: Alignment.center,
               children: [
-                Image.asset(
-                  'assets/images/products.png',
-                  width: double.infinity,
-                  height: 200,
-                  fit: BoxFit.cover,
-                ),
                 Container(
-                  color: Colors.black.withOpacity(0.3),
+                  height: 250,
                   width: double.infinity,
-                  height: 200,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('images/products.png'),  
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-                Text(
-                  'Discover our selection of Korean skincare products!',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'Laurasia',
-                    fontSize: screenWidth < 300 ? 14 : screenWidth < 400 ? 18 : 24,
-                    color: Colors.white,                  ),
+                const Positioned(
+                  top: 75,
+                  left: 0,
+                  right: 0,
+                  child: Column(
+                    children: [
+                      Text(
+                        'Products',
+                        style: TextStyle(
+                          fontSize: 48,
+                          color: Colors.white,
+                          fontFamily: 'Laurasia',
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'Discover our selection of Korean skincare products!',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                          fontFamily: 'TT',
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

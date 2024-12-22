@@ -45,7 +45,7 @@ class LocationSection extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  "Browse Districts Near You",
+                  "Browse Stores Near You",
                   style: TextStyle(
                     fontFamily: 'Laurasia',
                     fontSize: 28,
@@ -62,7 +62,7 @@ class LocationSection extends StatelessWidget {
                     );
                   },
                   child: const Text(
-                    "Find More Stores",
+                    "See All",
                     style: TextStyle(
                       color: Color(0xff071a58),
                       fontWeight: FontWeight.bold,

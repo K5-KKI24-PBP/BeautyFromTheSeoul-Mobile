@@ -10,6 +10,7 @@ import 'package:beauty_from_the_seoul_mobile/main/widgets/event_section.dart';
 import 'package:beauty_from_the_seoul_mobile/main/widgets/concern_section.dart';
 import 'package:beauty_from_the_seoul_mobile/main/widgets/location_section.dart';
 import 'package:beauty_from_the_seoul_mobile/main/widgets/adsubmit_section.dart';
+import 'package:beauty_from_the_seoul_mobile/main/widgets/brand_section.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -208,26 +209,30 @@ class _CustomerMenuState extends BaseMenuState<CustomerMenu> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Beauty From The Seoul - Admin',
+          'Beauty From The Seoul - Customer',
           style: TextStyle(
+            fontFamily: 'Laurasia',
             color: Colors.white,
             fontSize: 24,
-            fontWeight: FontWeight.bold,
           ),
         ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             color: Color(0xFF071a58), 
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(8), 
-              topRight: Radius.circular(8)
-            ),
+          ),
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(2.0),  // Height of the line
+          child: Container(
+            color: const Color(0xFFfcfaf3),  // Line color
+            height: 1.0,          // Thickness of the line
           ),
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () => logout(context),
+            color: Colors.white,
           ),
         ],
       ),
@@ -240,7 +245,9 @@ class _CustomerMenuState extends BaseMenuState<CustomerMenu> {
                     ads: ads.where((ad) => ad.fields.isApproved).toList(),
                     screenWidth: screenWidth,
                   ),
-                  const CategorySection(),  
+                
+                  const CategorySection(), 
+                  const BrandSection(),
                   const PromotionEventSection(),
                   const SkinConcernSection(),
                   const LocationSection(),
@@ -404,24 +411,21 @@ class _AdminMenuState extends BaseMenuState<AdminMenu> {
         title: const Text(
           'Beauty From The Seoul - Admin',
           style: TextStyle(
+            fontFamily: 'Laurasia',
             color: Colors.white,
             fontSize: 24,
-            fontWeight: FontWeight.bold,
           ),
         ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
-            color: Color(0xFF071a58), 
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(8), 
-              topRight: Radius.circular(8)
-            ),
+            color: Color(0xFF071a58),
           ),
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () => logout(context),
+            color: Colors.white,
           ),
         ],
       ),
@@ -436,6 +440,7 @@ class _AdminMenuState extends BaseMenuState<AdminMenu> {
                     isAdmin: true,
                     onLongPress: showAdminActionsDialog,
                   ),
+                  const BrandSection(),
                   const CategorySection(), 
                   const PromotionEventSection(),
                   const SkinConcernSection(),
