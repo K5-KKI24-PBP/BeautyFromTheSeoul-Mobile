@@ -180,6 +180,7 @@ class _FavoritePageState extends State<FavoritePage> {
               fontSize: 24,
             ),
           ),
+          
           flexibleSpace: Container(
             decoration: const BoxDecoration(
               color: Color(0xFF071a58), 
@@ -224,28 +225,29 @@ class _FavoritePageState extends State<FavoritePage> {
                             const SizedBox(width: 16), // Spacing between count and dropdown
                             // Dropdown menu
                             Expanded(
-                              child: ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  maxWidth: isVerySmallScreen ? 120 : 140,
-                                ),
-                                child: DropdownButton<String>(
-                                  value: selectedSortOption,
-                                  onChanged: _onSortOptionChanged,
-                                  isExpanded: true,
-                                  style: TextStyle(
-                                    fontSize: isVerySmallScreen ? 10 : 12,
-                                    color: Colors.black,
+                              child: Theme(
+                                  data: Theme.of(context).copyWith(
+                                    focusColor: Colors.transparent, // Remove focus highlight
+                                    hoverColor: Colors.transparent, // Remove hover color if needed
                                   ),
-                                  items: <String>['Most Oldest', 'Most Recent']
-                                      .map<DropdownMenuItem<String>>((String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value),
-                                    );
-                                  }).toList(),
+                                  child: DropdownButton<String>(
+                                    value: selectedSortOption,
+                                    onChanged: _onSortOptionChanged,
+                                    isExpanded: true,
+                                    style: TextStyle(
+                                      fontSize: isVerySmallScreen ? 10 : 12,
+                                      color: Colors.black,
+                                    ),
+                                    items: <String>['Most Oldest', 'Most Recent']
+                                        .map<DropdownMenuItem<String>>((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                  ),
                                 ),
                               ),
-                            ),
                             const Spacer(), // Push edit button to the right
                             // Edit button
                             TextButton(
