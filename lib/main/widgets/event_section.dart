@@ -77,7 +77,10 @@ class PromotionEventSection extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const EventPage()),
+          MaterialPageRoute(
+            builder: (context) => const EventPage(),
+            settings: const RouteSettings(name: '/event')
+            ),
         );
       },
       child: Container(

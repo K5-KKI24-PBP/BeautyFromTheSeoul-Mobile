@@ -4,6 +4,7 @@ import 'package:beauty_from_the_seoul_mobile/catalogue/screens/catalogue.dart';
 import 'package:beauty_from_the_seoul_mobile/events/screens/event_list.dart';
 import 'package:beauty_from_the_seoul_mobile/favorites/screens/favorites.dart';
 import 'package:beauty_from_the_seoul_mobile/locator/screens/locations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Material3BottomNav extends StatefulWidget {
   final bool showNavBar; // New parameter to control visibility
@@ -16,20 +17,30 @@ class Material3BottomNav extends StatefulWidget {
 
 class _Material3BottomNavState extends State<Material3BottomNav> {
   int _selectedIndex = 0;
+  bool isStaff = false;  
 
-  final List<Widget> _pages = [
-    const CustomerMenu(),
-    const CataloguePage(),
-    const EventPage(),
-    const LocatorPage(),
-    const FavoritePage()
-  ];
+  List<Widget> _pages = []; 
 
   @override
   void initState() {
     super.initState();
+    _initializeUserRole();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _updateIndexBasedOnCurrentRoute();
+    });
+  }
+
+  Future<void> _initializeUserRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isStaff = prefs.getBool('isStaff') ?? false;
+      _pages = [
+        isStaff ? const AdminMenu() : const CustomerMenu(), 
+        const CataloguePage(),
+        const EventPage(),
+        const LocatorPage(),
+        const FavoritePage(),
+      ];
     });
   }
 

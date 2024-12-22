@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:beauty_from_the_seoul_mobile/locator/screens/locations.dart';
 
 class LocationSection extends StatelessWidget {
@@ -9,28 +8,28 @@ class LocationSection extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Map<String, dynamic>> storeLocations = [
       {
-        "name": "Myeongdong",
+        "district": "Jung",
         "image": 'images/myeongdong.png',
         "borderColor": const Color(0xff9fc6ff),
         "mapsUrl": "https://www.google.com/maps?cid=9929880658946518724",
       },
       {
-        "name": "Gangnam",
+        "district": "Gangnam",
         "image": 'images/gangnam.png',
         "borderColor": const Color(0xffffc03e),
-        "mapsUrl": "https://maps.google.com/?cid=5590760012686468635n",
+        "mapsUrl": "https://maps.google.com/?cid=5590760012686468635",
       },
       {
-        "name": "Jung",
-        "image": 'images/jung.png',
+        "district": "Jongno",
+        "image": 'images/jongno.png',
         "borderColor": const Color(0xffccc2fe),
         "mapsUrl": "https://maps.google.com/?cid=13851289114136110333",
       },
       {
-        "name": "Seocho",
+        "district": "Seocho",
         "image": 'images/seocho.png',
         "borderColor": const Color(0xff9fc6ff),
-        "mapsUrl": "https://maps.google.com/?cid=7114928757871534792n",
+        "mapsUrl": "https://maps.google.com/?cid=7114928757871534792",
       },
     ];
 
@@ -46,7 +45,7 @@ class LocationSection extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  "Browse Locations Near You",
+                  "Browse Districts Near You",
                   style: TextStyle(
                     fontFamily: 'Laurasia',
                     fontSize: 28,
@@ -56,7 +55,10 @@ class LocationSection extends StatelessWidget {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const LocatorPage()),
+                      MaterialPageRoute(
+                        builder: (context) => const LocatorPage(),
+                        settings: const RouteSettings(name: '/locator'),
+                      ),
                     );
                   },
                   child: const Text(
@@ -79,10 +81,10 @@ class LocationSection extends StatelessWidget {
               itemBuilder: (context, index) {
                 final store = storeLocations[index];
                 return _buildStoreCard(
-                  store['name']!,
+                  context,
+                  store['district']!,
                   store['image']!,
                   store['borderColor']!,
-                  store['mapsUrl']!,
                 );
               },
             ),
@@ -93,19 +95,20 @@ class LocationSection extends StatelessWidget {
   }
 
   Widget _buildStoreCard(
-    String name,
+    BuildContext context,
+    String district,
     String imagePath,
     Color borderColor,
-    String mapsUrl,
   ) {
     return GestureDetector(
-      onTap: () async {
-        final Uri url = Uri.parse(mapsUrl);
-        if (await canLaunchUrl(url)) {
-          await launchUrl(url);
-        } else {
-          throw 'Could not launch $mapsUrl';
-        }
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LocatorPage(initialDistrict: district),
+            settings: const RouteSettings(name: '/locator'),
+          ),
+        );
       },
       child: Container(
         width: 300,
@@ -159,7 +162,7 @@ class LocationSection extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                 alignment: Alignment.center,
                 child: Text(
-                  name,
+                  district,
                   style: const TextStyle(
                     fontFamily: 'Laurasia',
                     fontSize: 18,
@@ -173,6 +176,4 @@ class LocationSection extends StatelessWidget {
       ),
     );
   }
-
-
 }

@@ -207,12 +207,24 @@ class _CustomerMenuState extends BaseMenuState<CustomerMenu> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Beauty from the Seoul - Customer'),
-        actions: [
-          TextButton(
-            onPressed: () => showAdSubmissionDialog(context, submitAd),
-            child: const Text('Submit Ad'),
+        title: const Text(
+          'Beauty From The Seoul - Admin',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
           ),
+        ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            color: Color(0xFF071a58), 
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(8), 
+              topRight: Radius.circular(8)
+            ),
+          ),
+        ),
+        actions: [
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () => logout(context),
@@ -389,18 +401,29 @@ class _AdminMenuState extends BaseMenuState<AdminMenu> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Beauty from the Seoul - Admin'),
-        actions: [
-          TextButton(
-            onPressed: () => showAdSubmissionDialog(context, submitAd),
-            child: const Text('Submit Ad'),
+        title: const Text(
+          'Beauty From The Seoul - Admin',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
           ),
+        ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            color: Color(0xFF071a58), 
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(8), 
+              topRight: Radius.circular(8)
+            ),
+          ),
+        ),
+        actions: [
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () => logout(context),
           ),
         ],
-    
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
