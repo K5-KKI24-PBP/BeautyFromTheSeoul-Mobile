@@ -12,7 +12,7 @@ class EditLocationPage extends StatefulWidget {
   final Function onSave;
 
   const EditLocationPage({
-    Key? key,
+    super.key,
     required this.id, // Require location ID
     required this.storeName,
     required this.streetName,
@@ -20,7 +20,7 @@ class EditLocationPage extends StatefulWidget {
     required this.gmapsLink,
     required this.storeImage,
     required this.onSave, 
-  }) : super(key: key);
+  });
 
   @override
   State<EditLocationPage> createState() => _EditLocationPageState();

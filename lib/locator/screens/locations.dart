@@ -269,7 +269,7 @@ class _LocatorPageState extends State<LocatorPage> {
                           maxCrossAxisExtent: 400,
                           mainAxisSpacing: 12.0,
                           crossAxisSpacing: 20.0,
-                          childAspectRatio: 0.62,
+                          childAspectRatio: 0.56,
                         ),
                         itemCount: filteredLocations.length,
                         itemBuilder: (context, index) {
