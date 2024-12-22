@@ -112,7 +112,8 @@ class LocationCard extends StatelessWidget {
                 ],
               ),
             ),
-
+            
+            const Spacer(),
             Divider(height: 1.0, color: Colors.grey[300]),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
