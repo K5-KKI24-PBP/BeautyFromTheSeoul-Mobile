@@ -1,5 +1,5 @@
-import 'package:beauty_from_the_seoul_mobile/catalogue/widgets/add_product.dart';
-import 'package:beauty_from_the_seoul_mobile/catalogue/widgets/edit_product.dart';
+import 'package:beauty_from_the_seoul_mobile/catalogue/screens/add_product.dart';
+import 'package:beauty_from_the_seoul_mobile/catalogue/screens/edit_product.dart';
 import 'package:beauty_from_the_seoul_mobile/catalogue/widgets/filter_products_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -232,7 +232,7 @@ class _CataloguePageState extends State<CataloguePage> {
         actions: [
           if (isStaff) // Show Add Product button only for staff
             IconButton(
-              icon: const Icon(Icons.add),
+              icon: const Icon(Icons.add, color: Colors.white), // Added white color
               tooltip: 'Add Product',
               onPressed: () {
                 // Navigate to the Add Product Page
@@ -248,7 +248,7 @@ class _CataloguePageState extends State<CataloguePage> {
               },
             ),
           IconButton(
-            icon: const Icon(Icons.filter_alt),
+            icon: const Icon(Icons.filter_alt, color: Colors.white), // Added white color
             tooltip: 'Filter Products',
             onPressed: () {
               showDialog(

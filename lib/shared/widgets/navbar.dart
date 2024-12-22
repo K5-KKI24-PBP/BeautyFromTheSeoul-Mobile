@@ -21,8 +21,8 @@ class _Material3BottomNavState extends State<Material3BottomNav> {
     const CustomerMenu(),
     const CataloguePage(),
     const EventPage(),
-    const FavoritePage(),
-    const LocatorPage()
+    const LocatorPage(),
+    const FavoritePage()
   ];
 
   @override
@@ -40,9 +40,9 @@ class _Material3BottomNavState extends State<Material3BottomNav> {
         setState(() => _selectedIndex = 1);
       } else if (currentRoute.contains('event')) {
         setState(() => _selectedIndex = 2);
-      } else if (currentRoute.contains('favorites')) {
-        setState(() => _selectedIndex = 3);
       } else if (currentRoute.contains('locator')) {
+        setState(() => _selectedIndex = 3);
+      } else if (currentRoute.contains('favorites')) {
         setState(() => _selectedIndex = 4);
       } else {
         setState(() => _selectedIndex = 0);
@@ -76,9 +76,9 @@ class _Material3BottomNavState extends State<Material3BottomNav> {
                 : index == 2 
                   ? '/events' 
                   : index == 3
-                    ? '/favorites'
+                    ? '/locator'
                     : index == 4
-                      ? '/locator'
+                      ? '/favorites'
                       : '/home',
             ),
           ),
@@ -101,14 +101,14 @@ class _Material3BottomNavState extends State<Material3BottomNav> {
           label: 'Events',
         ),
         NavigationDestination(
-          icon: Icon(Icons.favorite_border, color: Colors.white), // Unselected icon
-          selectedIcon: Icon(Icons.favorite, color: Color(0xFF071a58)), // Selected icon
-          label: 'Favorites',
-        ),
-        NavigationDestination(
           icon: Icon(Icons.map, color: Colors.white), // Unselected icon
           selectedIcon: Icon(Icons.map, color: Color(0xFF071a58)), // Selected icon
           label: 'Locator',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.favorite_border, color: Colors.white), // Unselected icon
+          selectedIcon: Icon(Icons.favorite, color: Color(0xFF071a58)), // Selected icon
+          label: 'Favorites',
         ),
       ],
       surfaceTintColor: Colors.transparent,
