@@ -95,7 +95,19 @@ class _EditLocationPageState extends State<EditLocationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Store Location'),
+        title: const Text(
+          'Edit Store Location',
+          style: TextStyle(
+            fontFamily: 'Laurasia',
+            color: Colors.white,
+            fontSize: 24,
+          ),
+        ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            color: Color(0xFF071a58), 
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

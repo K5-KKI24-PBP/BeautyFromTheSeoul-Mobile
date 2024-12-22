@@ -132,6 +132,7 @@ class _EditEventFormState extends State<EditEventForm> {
       appBar: AppBar(
         title: const Text('Edit Event',
           style: TextStyle(
+            fontFamily: 'Laurasia',
             color: Colors.white,
             fontSize: 24,
             fontWeight: FontWeight.bold,

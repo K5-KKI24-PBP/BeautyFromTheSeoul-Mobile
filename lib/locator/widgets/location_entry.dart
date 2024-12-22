@@ -53,7 +53,21 @@ class _LocatorEntryPageState extends State<LocatorEntryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Submit a Store Location')),
+      appBar: AppBar(
+        title: const Text(
+          'Submit A Store Location',
+          style: TextStyle(
+            fontFamily: 'Laurasia',
+            color: Colors.white,
+            fontSize: 24,
+          ),
+        ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            color: Color(0xFF071a58), 
+          ),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
