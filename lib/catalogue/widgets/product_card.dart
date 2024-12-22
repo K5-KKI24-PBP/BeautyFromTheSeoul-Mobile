@@ -57,7 +57,7 @@ class ProductCard extends StatelessWidget {
             Flexible(
               flex: 2,
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(2),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -68,7 +68,7 @@ class ProductCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
                       ),
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(

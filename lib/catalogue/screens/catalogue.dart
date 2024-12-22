@@ -13,7 +13,8 @@ class CataloguePage extends StatefulWidget {
   final bool isStaff;
   final String? filterProductType;
 
-  const CataloguePage({super.key, this.isStaff = false, this.filterProductType});
+  const CataloguePage(
+      {super.key, this.isStaff = false, this.filterProductType});
 
   @override
   _CataloguePageState createState() => _CataloguePageState();
@@ -59,21 +60,24 @@ class _CataloguePageState extends State<CataloguePage> {
 
     try {
       final response = await http.get(
-        Uri.parse('https://beauty-from-the-seoul.vercel.app/catalogue/get_product/'),
+        Uri.parse(
+            'https://beauty-from-the-seoul.vercel.app/catalogue/get_product/'),
       );
 
       if (response.statusCode == 200) {
         if (!mounted) return;
-        
+
         // Parse all products first
         List<Products> allProducts = productsFromJson(response.body);
-        
+
         // Apply filters client-side
         List<Products> filteredProducts = allProducts.where((product) {
-          bool matchesBrand = brand == null || brand.isEmpty || 
-                            product.fields.productBrand.toLowerCase() == brand.toLowerCase();
-          bool matchesType = type == null || type.isEmpty || 
-                            product.fields.productType.toLowerCase() == type.toLowerCase();
+          bool matchesBrand = brand == null ||
+              brand.isEmpty ||
+              product.fields.productBrand.toLowerCase() == brand.toLowerCase();
+          bool matchesType = type == null ||
+              type.isEmpty ||
+              product.fields.productType.toLowerCase() == type.toLowerCase();
           return matchesBrand && matchesType;
         }).toList();
 
@@ -210,19 +214,34 @@ class _CataloguePageState extends State<CataloguePage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    double horizontalPadding = screenWidth < 300 ? 4 : 8;
+    double gridSpacing = screenWidth < 300 ? 4 : 8;
+
+    double cardAspectRatio = screenWidth < 300
+        ? 0.4
+        : screenWidth < 400
+            ? 0.45
+            : screenWidth < 600
+                ? 0.6
+                : 0.7;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Browse Our Extensive Catalogue',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
+        title: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            'Browse Our Extensive Catalogue',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: screenWidth < 300 ? 18 : 24,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
-            color: Color(0xFF071a58), // Blue background color
+            color: Color(0xFF071a58),
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(8),
               topRight: Radius.circular(8),
@@ -230,39 +249,36 @@ class _CataloguePageState extends State<CataloguePage> {
           ),
         ),
         actions: [
-          if (isStaff) // Show Add Product button only for staff
+          if (isStaff)
             IconButton(
-              icon: const Icon(Icons.add, color: Colors.white), // Added white color
+              icon: const Icon(Icons.add, color: Colors.white, size: 20),
               tooltip: 'Add Product',
               onPressed: () {
-                // Navigate to the Add Product Page
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => const AddProductPage(),
                   ),
-                ).then((_) {
-                  // Refresh the product list when returning
-                  fetchProducts();
-                });
+                ).then((_) => fetchProducts());
               },
+              padding: const EdgeInsets.all(4),
+              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
             ),
           IconButton(
-            icon: const Icon(Icons.filter_alt, color: Colors.white), // Added white color
+            icon: const Icon(Icons.filter_alt, color: Colors.white, size: 20),
             tooltip: 'Filter Products',
             onPressed: () {
               showDialog(
                 context: context,
                 builder: (context) => FilterProductsWidget(
                   onFilterApply: (brand, type) {
-                    fetchProducts(
-                      brand: brand,
-                      type: type,
-                    );
+                    fetchProducts(brand: brand, type: type);
                   },
                 ),
               );
             },
+            padding: const EdgeInsets.all(4),
+            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
           ),
         ],
       ),
@@ -270,63 +286,59 @@ class _CataloguePageState extends State<CataloguePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: MediaQuery.of(context).size.width, // Full screen width
-              height: 200, // Adjust height as needed
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('images/products.png'), // Replace with your image path
-                  fit: BoxFit.cover, // Ensures the image fills the container
+            AspectRatio(
+              aspectRatio: screenWidth < 300 ? 2 / 1 : 16 / 9,
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('images/products.png'),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
-
-            const SizedBox(height: 16),
-            // Products grid
-            GridView.builder(
-              padding: const EdgeInsets.all(8),
-              shrinkWrap: true, // Shrink the GridView to fit content
-              physics: const NeverScrollableScrollPhysics(), // Disable GridView's scrolling
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.7,
-                mainAxisSpacing: 8,
-                crossAxisSpacing: 8,
+            SizedBox(height: screenWidth < 300 ? 8 : 16),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: cardAspectRatio,
+                  mainAxisSpacing: gridSpacing,
+                  crossAxisSpacing: gridSpacing,
+                ),
+                itemCount: products.length,
+                itemBuilder: (context, index) {
+                  final product = products[index];
+                  return ProductCard(
+                    product: product,
+                    isStaff: isStaff,
+                    isFavorite: favoriteProductIds.contains(product.pk),
+                    onFavoriteToggle: () => toggleFavorite(product.pk),
+                    onDelete: () => confirmDelete(product.pk),
+                    onEdit: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              EditProductForm(productId: product.pk),
+                        ),
+                      ).then((result) {
+                        if (result == true) fetchProducts();
+                      });
+                    },
+                  );
+                },
               ),
-              itemCount: products.length,
-              itemBuilder: (context, index) {
-                final product = products[index];
-                return ProductCard(
-                  product: product,
-                  isStaff: isStaff,
-                  isFavorite: favoriteProductIds.contains(product.pk),
-                  onFavoriteToggle: () {
-                    toggleFavorite(product.pk); // Toggle favorite status
-                  },
-                  onDelete: () {
-                    confirmDelete(product.pk); // Delete the product
-                  },
-                  onEdit: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            EditProductForm(productId: product.pk),
-                      ),
-                    ).then((result) {
-                      if (result == true) {
-                        fetchProducts(); // Refresh product list after editing
-                      }
-                    });
-                  },
-                );
-              },
             ),
+            SizedBox(height: screenWidth < 300 ? 8 : 16),
           ],
         ),
       ),
       bottomNavigationBar: const Material3BottomNav(),
     );
   }
-
 }
