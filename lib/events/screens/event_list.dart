@@ -259,9 +259,9 @@ class _EventsPageState extends State<EventPage> {
         title: const Text(
           'Promotion Events',
           style: TextStyle(
+            fontFamily: 'Laurasia',
             color: Colors.white,
             fontSize: 24,
-            fontWeight: FontWeight.bold,
           ),
         ),
         flexibleSpace: Container(
