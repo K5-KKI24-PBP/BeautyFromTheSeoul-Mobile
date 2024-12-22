@@ -58,7 +58,7 @@ class ProductCard extends StatelessWidget {
             Flexible(
               flex: 2,
               child: Padding(
-                padding: const EdgeInsets.all(2),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -67,7 +67,7 @@ class ProductCard extends StatelessWidget {
                       style: const TextStyle(
                         fontFamily: 'Laurasia',
                         fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                        fontSize: 18,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -77,7 +77,7 @@ class ProductCard extends StatelessWidget {
                       style: const TextStyle(
                         fontFamily: 'TT',
                         color: Colors.grey,
-                        fontSize: 12,
+                        fontSize: 16,
                       ),
                     ),
                     const Spacer(),

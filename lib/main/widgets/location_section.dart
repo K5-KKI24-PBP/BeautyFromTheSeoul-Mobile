@@ -45,7 +45,7 @@ class LocationSection extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  "Browse Stores Near You",
+                  "Browse Near You",
                   style: TextStyle(
                     fontFamily: 'Laurasia',
                     fontSize: 28,

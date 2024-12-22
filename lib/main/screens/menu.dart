@@ -14,7 +14,6 @@ import 'package:beauty_from_the_seoul_mobile/main/widgets/brand_section.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-// Shared base class for Ads
 abstract class BaseMenuState<T extends StatefulWidget> extends State<T> {
   List<AdEntry> ads = [];
   bool isLoading = true;
@@ -222,10 +221,10 @@ class _CustomerMenuState extends BaseMenuState<CustomerMenu> {
           ),
         ),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(2.0),  // Height of the line
+          preferredSize: const Size.fromHeight(2.0),  
           child: Container(
-            color: const Color(0xFFfcfaf3),  // Line color
-            height: 1.0,          // Thickness of the line
+            color: const Color(0xFFfcfaf3),  
+            height: 1.0,          
           ),
         ),
         actions: [
@@ -419,6 +418,13 @@ class _AdminMenuState extends BaseMenuState<AdminMenu> {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             color: Color(0xFF071a58),
+          ),
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(2.0),  
+          child: Container(
+            color: const Color(0xFFfcfaf3),  
+            height: 1.0,          
           ),
         ),
         actions: [

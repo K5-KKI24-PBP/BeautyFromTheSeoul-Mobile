@@ -9,27 +9,27 @@ class BrandSection extends StatelessWidget {
     List<Map<String, String>> brands = [
       {
         "name": "Beauty of Joseon",
-        "image": 'images/joseon.png',
+        "image": 'assets/images/joseon.png',
       },
       {
         "name": "Isntree",
-        "image": 'images/isntree.png',
+        "image": 'assets/images/isntree.png',
       },
       {
         "name": "Klairs",
-        "image": 'images/klairs.png',
+        "image": 'assets/images/klairs.png',
       },
       {
         "name": "Then I Met You",
-        "image": 'images/then.png',
+        "image": 'assets/images/then.png',
       },
       {
         "name": "Benton",
-        "image": 'images/benton.png',
+        "image": 'assets/images/benton.png',
       },
       {
         "name": "Saturday Skin",
-        "image": 'images/saturday.png',
+        "image": 'assets/images/saturday.png',
       },
     ];
 
@@ -90,9 +90,11 @@ class BrandSection extends StatelessWidget {
         margin: const EdgeInsets.only(left: 16.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(70.0),
-          // border: Border.all(color: const Color(0xff071a58), width: 4),
-          image: DecorationImage(
-            image: AssetImage(brand['image']!),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(70.0),
+          child: Image.asset(
+            brand['image']!,
             fit: BoxFit.cover,
           ),
         ),

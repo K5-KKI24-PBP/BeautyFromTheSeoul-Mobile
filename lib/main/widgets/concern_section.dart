@@ -26,7 +26,7 @@ class SkinConcernSection extends StatelessWidget {
         "type": "Lip Treatment",
         "description": "Deeply nourish and hydrate your lips to restore its natural moisture balance.",
         "color": const Color(0xffccc2fe),
-        "image": 'images/dry_lips.png',
+        "image": 'assets/images/dry_lips.png',
       },
     ];
 

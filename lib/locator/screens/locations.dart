@@ -189,14 +189,12 @@ class _LocatorPageState extends State<LocatorPage> {
           children: [
             Stack(
               children: [
-                Container(
+                SizedBox(
                   height: 250,
                   width: double.infinity,
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('images/locator.png'),  
-                      fit: BoxFit.cover,
-                    ),
+                  child: Image.asset(
+                    'assets/images/locator.png',
+                    fit: BoxFit.cover,
                   ),
                 ),
                 const Positioned(

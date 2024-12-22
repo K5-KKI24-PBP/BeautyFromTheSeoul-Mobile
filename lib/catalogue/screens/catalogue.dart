@@ -243,10 +243,6 @@ class _CataloguePageState extends State<CataloguePage> {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             color: Color(0xFF071a58),
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(8),
-              topRight: Radius.circular(8),
-            ),
           ),
         ),
         actions: [
@@ -283,20 +279,19 @@ class _CataloguePageState extends State<CataloguePage> {
           ),
         ],
       ),
+
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Stack(
               children: [
-                Container(
+                SizedBox(
                   height: 250,
                   width: double.infinity,
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('images/products.png'),  
-                      fit: BoxFit.cover,
-                    ),
+                  child: Image.asset(
+                    'assets/images/products.png',
+                    fit: BoxFit.cover,
                   ),
                 ),
                 const Positioned(
@@ -327,6 +322,55 @@ class _CataloguePageState extends State<CataloguePage> {
                 ),
               ],
             ),
+            const SizedBox(height: 20),
+            Center(
+              child: Column(
+                children: [
+                  const Text(
+                    'Looking for a specific brand or product type? Search here!',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: 'TT',
+                      color: Color(0xFF071a58),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
+                  ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => FilterProductsWidget(
+                          onFilterApply: (brand, type) {
+                            fetchProducts(brand: brand, type: type);
+                          },
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF071a58),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 32,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                    child: const Text(
+                      'Filter Products',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'TT',
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
             SizedBox(height: screenWidth < 300 ? 8 : 16),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
