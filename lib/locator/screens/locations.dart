@@ -34,7 +34,7 @@ class _LocatorPageState extends State<LocatorPage> {
   }
 
   Future<void> _fetchLocations() async {
-    const Url = 'http://localhost:8000/store-locator/fetch_location/';
+    const Url = 'https://beauty-from-the-seoul.vercel.app/store-locator/fetch_location/';
 
     try {
       final response = await http.get(Uri.parse(Url));
@@ -70,7 +70,7 @@ class _LocatorPageState extends State<LocatorPage> {
 
   // Delete location from the backend
   Future<void> deleteLocation(String id) async {
-    final url = 'http://localhost:8000/store-locator/delete_location/$id/';
+    final url = 'https://beauty-from-the-seoul.vercel.app/store-locator/delete_location/$id/';
 
     try {
       final response = await http.delete(

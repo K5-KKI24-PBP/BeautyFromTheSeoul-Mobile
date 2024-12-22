@@ -54,7 +54,7 @@ class _EditLocationPageState extends State<EditLocationPage> {
   }
 
   Future<void> _saveChanges() async {
-    final url = 'http://localhost:8000/store-locator/edit_location_flutter/${widget.id}/';
+    final url = 'https://beauty-from-the-seoul.vercel.app/store-locator/edit_location_flutter/${widget.id}/';
     final body = {
       'store_name': _storeNameController.text,
       'street_name': _streetNameController.text,

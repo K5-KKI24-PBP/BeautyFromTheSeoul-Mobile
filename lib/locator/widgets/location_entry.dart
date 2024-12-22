@@ -21,7 +21,7 @@ class _LocatorEntryPageState extends State<LocatorEntryPage> {
     if (_formKey.currentState!.validate()) {
       try {
         final response = await http.post(
-          Uri.parse('http://localhost:8000/store-locator/create_location_flutter/'),
+          Uri.parse('https://beauty-from-the-seoul.vercel.app/store-locator/create_location_flutter/'),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
             'storeName': _storeNameController.text,
