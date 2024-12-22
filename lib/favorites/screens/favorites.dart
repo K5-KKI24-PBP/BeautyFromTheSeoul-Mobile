@@ -164,7 +164,9 @@ class _FavoritePageState extends State<FavoritePage> {
 
   @override
   Widget build(BuildContext context) {
-    final isMobileView = MediaQuery.of(context).size.width < 600;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isVerySmallScreen = screenWidth < 360;
+    final isMobileView = screenWidth < 600;
 
     return DefaultTabController(
       length: categories.length,
@@ -196,48 +198,57 @@ class _FavoritePageState extends State<FavoritePage> {
                   child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            // Items count
                             Text(
                               '${favorites.length} items',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 12,
+                                fontSize: isVerySmallScreen ? 10 : 12,
                               ),
                             ),
-                            DropdownButton<String>(
-                              value: selectedSortOption,
-                              onChanged: _onSortOptionChanged,
-                              style: const TextStyle(
-                                fontSize: 12, // Set the font size
-                                color: Colors.black, // Ensure text color remains black
-                              ),
-                              focusColor: Colors.transparent, // Remove gray highlight on focus
-                              dropdownColor: Colors.white, // Set the dropdown menu background color
-                              items: <String>['Most Oldest', 'Most Recent']
-                                  .map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(
-                                    value,
-                                    style: const TextStyle(fontSize: 12), // Set the desired font size here
+                            const SizedBox(width: 16), // Spacing between count and dropdown
+                            // Dropdown menu
+                            Expanded(
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxWidth: isVerySmallScreen ? 120 : 140,
+                                ),
+                                child: DropdownButton<String>(
+                                  value: selectedSortOption,
+                                  onChanged: _onSortOptionChanged,
+                                  isExpanded: true,
+                                  style: TextStyle(
+                                    fontSize: isVerySmallScreen ? 10 : 12,
+                                    color: Colors.black,
                                   ),
-                                );
-                              }).toList(),
+                                  items: <String>['Most Oldest', 'Most Recent']
+                                      .map<DropdownMenuItem<String>>((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
                             ),
-                            const SizedBox(width: 220),
+                            const Spacer(), // Push edit button to the right
+                            // Edit button
                             TextButton(
                               onPressed: toggleEditMode,
                               style: TextButton.styleFrom(
                                 backgroundColor: const Color(0xFF071a58),
-                                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                                padding: EdgeInsets.symmetric(
+                                  vertical: isVerySmallScreen ? 6.0 : 8.0,
+                                  horizontal: isVerySmallScreen ? 16.0 : 20.0,
+                                ),
                               ),
                               child: Text(
                                 isEditMode ? 'Done' : 'Edit',
-                                style: const TextStyle(
-                                  fontSize: 12,
+                                style: TextStyle(
+                                  fontSize: isVerySmallScreen ? 10 : 12,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                 ),
