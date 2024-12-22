@@ -274,139 +274,164 @@ class _EventsPageState extends State<EventPage> {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              Image.asset(
-                'assets/images/events2.png',
-                width: double.infinity,
-                height: 200,
-                fit: BoxFit.cover,
-              ),
-              Container(
-                color: Colors.black.withOpacity(0.3),
-                width: double.infinity,
-                height: 200,
-              ),
-              const Text(
-                'Discover the latest events and promotions happening near you!',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: 'Laurasia',
-                  fontSize: 24,
-                  color: Colors.white,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
+              children: [
+                Container(
+                  height: 250,
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('images/events2.png'),  
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const Padding(padding: EdgeInsets.all(6)),
-          OutlinedButton(
-            onPressed: () => _selectDate(context), // Open the date picker
-            child: const Text('Filter by Month'),
-          ),
-
-          if (isStaff) ...[IconButton(
-            icon: const Icon(Icons.add),
-            tooltip: 'Add Event',
-            onPressed: () async {
-              final newEvent = await Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const EventForm()),
-              );
-
-              if (newEvent != null && mounted) {
-                fetchEvents().then((fetchedEvents) {
-                  setState(() {
-                    events = fetchedEvents; // Update displayed events with filtered data
-                  });
-                });
-              }
-            },
-          )],
-
-          const Padding(padding: EdgeInsets.all(4)),
-          Expanded(
-            child: FutureBuilder<List<events_model.Events>>(
-              future: fetchEvents(),  // Load all events initially
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                }
-                if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                  return ListView.builder(
-                    itemCount: events.length,
-                    itemBuilder: (context, index) {
-                    final event = events[index];
-
-                      return EventCard(
-                        name: event.fields.name,
-                        description: event.fields.description,
-                        startDate: event.fields.startDate,
-                        endDate: event.fields.endDate,
-                        promotionType: event.fields.promotionType,
-                        location: event.fields.location,
-                        isStaff: isStaff,
-                        isRsvp: rsvpEventIds.contains(event.pk.toString()),
-
-                        onEdit: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EditEventForm(eventId: event.pk),
-                            ),
-                          ).then((result) {
-                            if (result != null) {
-                              setState(() {
-                                // Update the specific event in the list
-                                final updatedEventIndex = events.indexWhere((e) => e.pk == result['id']);
-                                events[updatedEventIndex] = events_model.Events(
-                                  model: 'events.events',
-                                  pk: result['id'],
-                                  fields: events_model.Fields(
-                                    name: result['title'],
-                                    description: result['description'],
-                                    startDate: DateTime.parse(result['start_date']),
-                                    endDate: DateTime.parse(result['end_date']),
-                                    location: result['location'],
-                                    promotionType: result['promotion_type'],
-                                  ),
-                                );
-                              });
-                            }
-                          });
-                        },
-
-                        onDelete: () {
-                          confirmDelete(event.pk);
-                        },
-
-                        onRsvp: () {
-                          rsvpEvent(event.pk);
-                        },
-
-                        onCancelRsvp: () {
-                          cancelrsvp(event.pk);
-                        },
-                      );
-                    },
-                  );
-                } else {
-                  return const Text(
-                    'No promotion events available',
-                    style: TextStyle(fontSize: 20, color: Colors.black),
-                  );
-                }
-              },
+                const Positioned(
+                  top: 75,
+                  left: 0,
+                  right: 0,
+                  child: Column(
+                    children: [
+                      Text(
+                        'Promotion Events',
+                        style: TextStyle(
+                          fontSize: 48,
+                          color: Colors.white,
+                          fontFamily: 'Laurasia',
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'Discover the latest events and promotions near you!',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                          fontFamily: 'TT',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
+            const Padding(padding: EdgeInsets.all(6)),
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  OutlinedButton(
+                    onPressed: () => _selectDate(context), // Open the date picker
+                    child: const Text('Filter by Month'),
+                  ),
+
+                  if (isStaff) ...[IconButton(
+                    icon: const Icon(Icons.add),
+                    tooltip: 'Add Event',
+                    onPressed: () async {
+                      final newEvent = await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const EventForm()),
+                      );
+
+                      if (newEvent != null && mounted) {
+                        fetchEvents().then((fetchedEvents) {
+                          setState(() {
+                            events = fetchedEvents; // Update displayed events with filtered data
+                          });
+                        });
+                      }
+                    },
+                  )],
+                ],
+              )
+            ),
+            const Padding(padding: EdgeInsets.all(4)),
+            SizedBox(
+              height: MediaQuery.of(context).size.height - 300, // Adjust height to fit the screen
+              child: FutureBuilder<List<events_model.Events>>(
+                future: fetchEvents(),  // Load all events initially
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  }
+                  if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                    return ListView.builder(
+                      itemCount: events.length,
+                      itemBuilder: (context, index) {
+                      final event = events[index];
+
+                        return EventCard(
+                          name: event.fields.name,
+                          description: event.fields.description,
+                          startDate: event.fields.startDate,
+                          endDate: event.fields.endDate,
+                          promotionType: event.fields.promotionType,
+                          location: event.fields.location,
+                          isStaff: isStaff,
+                          isRsvp: rsvpEventIds.contains(event.pk.toString()),
+
+                          onEdit: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditEventForm(eventId: event.pk),
+                              ),
+                            ).then((result) {
+                              if (result != null) {
+                                setState(() {
+                                  // Update the specific event in the list
+                                  final updatedEventIndex = events.indexWhere((e) => e.pk == result['id']);
+                                  events[updatedEventIndex] = events_model.Events(
+                                    model: 'events.events',
+                                    pk: result['id'],
+                                    fields: events_model.Fields(
+                                      name: result['title'],
+                                      description: result['description'],
+                                      startDate: DateTime.parse(result['start_date']),
+                                      endDate: DateTime.parse(result['end_date']),
+                                      location: result['location'],
+                                      promotionType: result['promotion_type'],
+                                    ),
+                                  );
+                                });
+                              }
+                            });
+                          },
+
+                          onDelete: () {
+                            confirmDelete(event.pk);
+                          },
+
+                          onRsvp: () {
+                            rsvpEvent(event.pk);
+                          },
+
+                          onCancelRsvp: () {
+                            cancelrsvp(event.pk);
+                          },
+                        );
+                      },
+                    );
+                  } else {
+                    return const Text(
+                      'No promotion events available',
+                      style: TextStyle(fontSize: 20, color: Colors.black),
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
       ),
-      bottomNavigationBar: const Material3BottomNav(), // Added Navbar here
+    bottomNavigationBar: const Material3BottomNav(), // Added Navbar here
     );
   }
 }
