@@ -173,7 +173,7 @@ class _FavoritePageState extends State<FavoritePage> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text(
-            'Store Locator',
+            'My Favorites',
             style: TextStyle(
               fontFamily: 'Laurasia',
               color: Colors.white,
@@ -187,10 +187,10 @@ class _FavoritePageState extends State<FavoritePage> {
           ),
           bottom: TabBar(
             isScrollable: isMobileView,
-            labelColor: Colors.black,
+            labelColor: Colors.white,
             unselectedLabelColor: Colors.grey,
             indicator: const UnderlineTabIndicator(
-              borderSide: BorderSide(width: 3.0, color: Colors.black),
+              borderSide: BorderSide(width: 3.0, color: Colors.white),
               insets: EdgeInsets.symmetric(horizontal: 8.0),
             ),
             tabs: categories.map((category) => Tab(text: category)).toList(),

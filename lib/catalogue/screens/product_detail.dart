@@ -18,6 +18,7 @@ class _ProductDetailState extends State<ProductDetail> {
   double averageRating = 0.0;
   bool isDescriptionExpanded = false;
 
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,6 +27,13 @@ class _ProductDetailState extends State<ProductDetail> {
           widget.product.fields.productName,
           style: const TextStyle(
             fontFamily: 'Laurasia',
+            color: Colors.white,
+            fontSize: 24,
+          ),
+        ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            color: Color(0xFF071a58),
           ),
         ),
       ),
