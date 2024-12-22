@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
-import 'package:beauty_from_the_seoul_mobile/main/screens/onboarding.dart';
 import 'package:beauty_from_the_seoul_mobile/authentication/screens/welcome.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:month_year_picker/month_year_picker.dart';

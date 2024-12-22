@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:beauty_from_the_seoul_mobile/shared/widgets/navbar.dart';
 import 'package:beauty_from_the_seoul_mobile/locator/widgets/location_entry.dart';
 import 'package:beauty_from_the_seoul_mobile/locator/widgets/edit_location.dart';
+import 'package:beauty_from_the_seoul_mobile/locator/widgets/location_card.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class LocatorPage extends StatefulWidget {
   const LocatorPage({super.key});
@@ -11,6 +15,82 @@ class LocatorPage extends StatefulWidget {
 }
 
 class _LocatorPageState extends State<LocatorPage> {
+  bool isStaff = false;
+  List<Map<String, dynamic>> locations = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _checkUserRole();
+    _fetchLocations(); // Fetch locations from the server
+  }
+
+  Future<void> _checkUserRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userRole = prefs.getString('userRole') ?? '';
+    setState(() {
+      isStaff = userRole == 'admin';
+    });
+  }
+
+  Future<void> _fetchLocations() async {
+    const Url = 'http://localhost:8000/store-locator/fetch_location/';
+
+    try {
+      final response = await http.get(Uri.parse(Url));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        // Assuming the API returns a list of locations under the "locations" key
+        setState(() {
+          locations = List<Map<String, dynamic>>.from(data['locations']);
+        });
+        print(locations);
+      } else {
+        // Handle server errors
+        throw Exception('Failed to load locations');
+      }
+    } catch (error) {
+      // Handle network errors
+      print('Error fetching locations: $error');
+    }
+  }
+
+  Future<void> _navigateToAddLocation() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const LocatorEntryPage()),
+    );
+
+    // If the result is true, fetch locations again
+    if (result == true) {
+      _fetchLocations();
+    }
+  }
+
+  // Delete location from the backend
+  Future<void> deleteLocation(String id) async {
+    final url = 'http://localhost:8000/store-locator/delete_location/$id/';
+
+    try {
+      final response = await http.delete(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          locations.removeWhere((location) => location['id'] == id); // Remove from UI
+        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Location deleted successfully')));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to delete location')));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error deleting location: $e')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,38 +129,51 @@ class _LocatorPageState extends State<LocatorPage> {
             ],
           ),
           Expanded(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      // Navigate to LocatorEntryPage
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => LocatorEntryPage()),
+            child: locations.isEmpty
+                ? const Center(
+                    child: Text(
+                    'No locations available.',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: locations.length,
+                    itemBuilder: (context, index) {
+                      final location = locations[index];
+                      return LocationCard(
+                        location: location,
+                        isStaff: isStaff,
+                        onDelete: deleteLocation,
+                        onEdit: (id) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditLocationPage(
+                                id: id,
+                                storeName: location['storeName'] ?? '',
+                                streetName: location['streetName'] ?? '',
+                                district: location['district'] ?? '',
+                                gmapsLink: location['gmapsLink'] ?? '',
+                                storeImage: location['storeImage'] ?? '',
+                                onSave: _fetchLocations,
+                              ),
+                            ),
+                          );
+                        },
                       );
                     },
-                    child: const Text('Submit a Store Location'),
                   ),
-                  SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Navigate to EditLocationPage
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => EditLocationPage()),
-                      );
-                    },
-                    child: const Text('Edit a Store Location'),
-                  ),
-                ],
-              ),
-            ),
           ),
         ],
       ),
-      bottomNavigationBar: const Material3BottomNav(),
+      floatingActionButton: isStaff
+        ? FloatingActionButton(
+            onPressed: _navigateToAddLocation,
+            child: const Icon(Icons.add),
+            backgroundColor: Colors.blue,
+          )
+        : null,  // When isStaff is false, no floating action button will be shown
+    bottomNavigationBar: const Material3BottomNav(),
     );
   }
 }
