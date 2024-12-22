@@ -68,6 +68,7 @@ class _Material3BottomNavState extends State<Material3BottomNav> {
     }
 
     final screenWidth = MediaQuery.of(context).size.width;
+    final isVerySmallScreen = screenWidth < 320;
     final isSmallScreen = screenWidth < 360;
 
     return NavigationBar(
@@ -104,62 +105,62 @@ class _Material3BottomNavState extends State<Material3BottomNav> {
         NavigationDestination(
           icon: Icon(Icons.home_outlined, 
             color: Colors.white,
-            size: isSmallScreen ? 20 : 24,
+            size: isVerySmallScreen ? 16 : isSmallScreen ? 18 : 24,
           ),
           selectedIcon: Icon(Icons.home_rounded, 
             color: const Color(0xFF071a58),
-            size: isSmallScreen ? 20 : 24,
+            size: isVerySmallScreen ? 16 : isSmallScreen ? 18 : 24,
           ),
           label: 'Home',
         ),
         NavigationDestination(
           icon: Icon(Icons.shopping_bag_outlined, 
             color: Colors.white,
-            size: isSmallScreen ? 20 : 24,
+            size: isVerySmallScreen ? 16 : isSmallScreen ? 18 : 24,
           ),
           selectedIcon: Icon(Icons.shopping_bag, 
             color: const Color(0xFF071a58),
-            size: isSmallScreen ? 20 : 24,
+            size: isVerySmallScreen ? 16 : isSmallScreen ? 18 : 24,
           ),
           label: 'Catalogue',
         ),
         NavigationDestination(
           icon: Icon(Icons.event_outlined, 
             color: Colors.white,
-            size: isSmallScreen ? 20 : 24,
+            size: isVerySmallScreen ? 18 : isSmallScreen ? 20 : 24,
           ),
           selectedIcon: Icon(Icons.event, 
             color: const Color(0xFF071a58),
-            size: isSmallScreen ? 20 : 24,
+            size: isVerySmallScreen ? 18 : isSmallScreen ? 20 : 24,
           ),
           label: 'Events',
         ),
         NavigationDestination(
           icon: Icon(Icons.map, 
             color: Colors.white,
-            size: isSmallScreen ? 20 : 24,
+            size: isVerySmallScreen ? 18 : isSmallScreen ? 20 : 24,
           ),
           selectedIcon: Icon(Icons.map, 
             color: const Color(0xFF071a58),
-            size: isSmallScreen ? 20 : 24,
+            size: isVerySmallScreen ? 18 : isSmallScreen ? 20 : 24,
           ),
           label: 'Locator',
         ),
         NavigationDestination(
           icon: Icon(Icons.favorite_border, 
             color: Colors.white,
-            size: isSmallScreen ? 20 : 24,
+            size: isVerySmallScreen ? 18 : isSmallScreen ? 20 : 24,
           ),
           selectedIcon: Icon(Icons.favorite, 
             color: const Color(0xFF071a58),
-            size: isSmallScreen ? 20 : 24,
+            size: isVerySmallScreen ? 18 : isSmallScreen ? 20 : 24,
           ),
           label: 'Favorites',
         ),
       ],
       surfaceTintColor: Colors.transparent,
       shadowColor: Colors.transparent,
-      height: isSmallScreen ? 55 : 65,
+      height: isVerySmallScreen ? 45 : isSmallScreen ? 50 : 65,
       elevation: 0,
     );
   }
