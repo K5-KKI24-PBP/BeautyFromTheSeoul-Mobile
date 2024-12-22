@@ -231,7 +231,7 @@ class _CataloguePageState extends State<CataloguePage> {
         title: FittedBox(
           fit: BoxFit.scaleDown,
           child: Text(
-            'Browse Our Extensive Catalogue',
+            'Products',
             style: TextStyle(
               color: Colors.white,
               fontSize: screenWidth < 300 ? 18 : 24,
@@ -286,17 +286,31 @@ class _CataloguePageState extends State<CataloguePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AspectRatio(
-              aspectRatio: screenWidth < 300 ? 2 / 1 : 16 / 9,
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/images/products.png'),
-                    fit: BoxFit.cover,
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/products.png',
+                  width: double.infinity,
+                  height: 200,
+                  fit: BoxFit.cover,
+                ),
+                Container(
+                  color: Colors.black.withOpacity(0.3),
+                  width: double.infinity,
+                  height: 200,
+                ),
+                Text(
+                  'Discover our selection of Korean skincare products!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Laurasia',
+                    fontSize: screenWidth < 300 ? 14 : screenWidth < 400 ? 18 : 24,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              ),
+              ],
             ),
             SizedBox(height: screenWidth < 300 ? 8 : 16),
             Padding(
