@@ -6,7 +6,7 @@ class LocationCard extends StatelessWidget {
   final bool isStaff;
   final Function(String) onDelete;
   final Function(String) onEdit;
-  final int index;  // Add an index parameter to determine border color
+  final int index;
 
   const LocationCard({
     super.key,
@@ -62,121 +62,126 @@ class LocationCard extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Card(
-        elevation: 4.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0),
-          side: BorderSide(
-            color: _getBorderColor(index),  // Apply border color dynamically
-            width: 3.0,
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildImageSlide(imageUrl),
-
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    location['storeName'] ?? '',
-                    style: const TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 8.0),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.location_on,
-                        color: Colors.red,
-                        size: 18.0,
-                      ),
-                      const SizedBox(width: 4.0),
-                      Expanded(
-                        child: Text(
-                          fullStreet,
-                          style: TextStyle(
-                            fontSize: 14.0,
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            
-            const Spacer(),
-            Divider(height: 1.0, color: Colors.grey[300]),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-              child: Column(
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      final gmapsLink = location['gmapsLink'] ?? '';
-                      if (gmapsLink.isNotEmpty) {
-                        _launchGmaps(gmapsLink);
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Google Maps link unavailable')),
-                        );
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue[900],
-                      foregroundColor: Colors.white,
-                      minimumSize: const Size.fromHeight(45), // Full width button
-                    ),
-                    icon: const Icon(Icons.map),
-                    label: const Text('How Do I Get There?'),
-                  ),
-                  
-                  if (isStaff) ...[
-                    const SizedBox(height: 8),  // Spacing between buttons
-                    
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      child: isStaff
+          ? GestureDetector(
+              onLongPress: () {
+                // Show a dialog for edit and delete options
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Choose an action'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () => onEdit(location['id']),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.amber[300],
-                              foregroundColor: Colors.black,
-                              minimumSize: const Size.fromHeight(45),  // Full width button
-                            ),
-                            child: const Text('Edit'),
-                          ),
+                        ListTile(
+                          leading: const Icon(Icons.edit),
+                          title: const Text('Edit Location'),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            onEdit(location['id']);
+                          },
                         ),
-                        const SizedBox(width: 8),  // Spacing between buttons
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () => onDelete(location['id']),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.purple[100],
-                              foregroundColor: Colors.black,
-                              minimumSize: const Size.fromHeight(45),  // Full width button
-                            ),
-                            child: const Text('Delete'),
-                          ),
+                        ListTile(
+                          leading: const Icon(Icons.delete),
+                          title: const Text('Delete Location'),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            onDelete(location['id']);
+                          },
                         ),
                       ],
                     ),
-                  ],
-                ],
-              ),
+                  ),
+                );
+              },
+              child: _buildLocationCard(context, imageUrl, fullStreet),
             )
+          : _buildLocationCard(context, imageUrl, fullStreet),
+    );
+  }
 
-          ],
+  Widget _buildLocationCard(BuildContext context, String imageUrl, String fullStreet) {
+    return Card(
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+        side: BorderSide(
+          color: _getBorderColor(index),  // Apply border color dynamically
+          width: 3.0,
         ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildImageSlide(imageUrl),
+
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  location['storeName'] ?? '',
+                  style: const TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 8.0),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.location_on,
+                      color: Colors.red,
+                      size: 18.0,
+                    ),
+                    const SizedBox(width: 4.0),
+                    Expanded(
+                      child: Text(
+                        fullStreet,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          
+          const Spacer(),
+          Divider(height: 1.0, color: Colors.grey[300]),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+            child: Column(
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () {
+                    final gmapsLink = location['gmapsLink'] ?? '';
+                    if (gmapsLink.isNotEmpty) {
+                      _launchGmaps(gmapsLink);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Google Maps link unavailable')),
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue[900],
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size.fromHeight(45), // Full width button
+                  ),
+                  icon: const Icon(Icons.map),
+                  label: const Text('How Do I Get There?'),
+                ),
+              ],
+            ),
+          )
+        ],
       ),
     );
   }
