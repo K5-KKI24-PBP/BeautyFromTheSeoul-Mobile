@@ -67,12 +67,17 @@ class _Material3BottomNavState extends State<Material3BottomNav> {
       return const SizedBox(); // Return empty box if navbar is not needed
     }
 
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 360;
+
     return NavigationBar(
       animationDuration: const Duration(milliseconds: 500),
       selectedIndex: _selectedIndex,
       backgroundColor: const Color(0xFF071a58),
       indicatorColor: Colors.white,
-      labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+      labelBehavior: isSmallScreen 
+          ? NavigationDestinationLabelBehavior.onlyShowSelected 
+          : NavigationDestinationLabelBehavior.alwaysShow,
       onDestinationSelected: (index) {
         setState(() {
           _selectedIndex = index;
@@ -95,36 +100,66 @@ class _Material3BottomNavState extends State<Material3BottomNav> {
           ),
         );
       },
-      destinations: const [
+      destinations: [
         NavigationDestination(
-          icon: Icon(Icons.home_outlined, color: Colors.white),
-          selectedIcon: Icon(Icons.home_rounded, color: Color(0xFF071a58)),
+          icon: Icon(Icons.home_outlined, 
+            color: Colors.white,
+            size: isSmallScreen ? 20 : 24,
+          ),
+          selectedIcon: Icon(Icons.home_rounded, 
+            color: const Color(0xFF071a58),
+            size: isSmallScreen ? 20 : 24,
+          ),
           label: 'Home',
         ),
         NavigationDestination(
-          icon: Icon(Icons.shopping_bag_outlined, color: Colors.white),
-          selectedIcon: Icon(Icons.shopping_bag, color: Color(0xFF071a58)),
+          icon: Icon(Icons.shopping_bag_outlined, 
+            color: Colors.white,
+            size: isSmallScreen ? 20 : 24,
+          ),
+          selectedIcon: Icon(Icons.shopping_bag, 
+            color: const Color(0xFF071a58),
+            size: isSmallScreen ? 20 : 24,
+          ),
           label: 'Catalogue',
         ),
         NavigationDestination(
-          icon: Icon(Icons.event_outlined, color: Colors.white),
-          selectedIcon: Icon(Icons.event, color: Color(0xFF071a58)),
+          icon: Icon(Icons.event_outlined, 
+            color: Colors.white,
+            size: isSmallScreen ? 20 : 24,
+          ),
+          selectedIcon: Icon(Icons.event, 
+            color: const Color(0xFF071a58),
+            size: isSmallScreen ? 20 : 24,
+          ),
           label: 'Events',
         ),
         NavigationDestination(
-          icon: Icon(Icons.map, color: Colors.white), // Unselected icon
-          selectedIcon: Icon(Icons.map, color: Color(0xFF071a58)), // Selected icon
+          icon: Icon(Icons.map, 
+            color: Colors.white,
+            size: isSmallScreen ? 20 : 24,
+          ),
+          selectedIcon: Icon(Icons.map, 
+            color: const Color(0xFF071a58),
+            size: isSmallScreen ? 20 : 24,
+          ),
           label: 'Locator',
         ),
         NavigationDestination(
-          icon: Icon(Icons.favorite_border, color: Colors.white), // Unselected icon
-          selectedIcon: Icon(Icons.favorite, color: Color(0xFF071a58)), // Selected icon
+          icon: Icon(Icons.favorite_border, 
+            color: Colors.white,
+            size: isSmallScreen ? 20 : 24,
+          ),
+          selectedIcon: Icon(Icons.favorite, 
+            color: const Color(0xFF071a58),
+            size: isSmallScreen ? 20 : 24,
+          ),
           label: 'Favorites',
         ),
       ],
       surfaceTintColor: Colors.transparent,
       shadowColor: Colors.transparent,
-      height: 65,
+      height: isSmallScreen ? 55 : 65,
       elevation: 0,
     );
   }

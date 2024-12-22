@@ -292,7 +292,7 @@ class _CataloguePageState extends State<CataloguePage> {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage('images/products.png'),
+                    image: AssetImage('assets/images/products.png'),
                     fit: BoxFit.cover,
                   ),
                 ),
