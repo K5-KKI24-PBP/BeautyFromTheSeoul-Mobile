@@ -65,30 +65,29 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
   uses-material-design: true
 
-  # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
   assets:
-    - assets/images/
+    # Adding each image explicitly
+    - assets/images/acne.png
+    - assets/images/cleanser.png
+    - assets/images/dark_circles.png
+    - assets/images/dry_lips.png
+    - assets/images/essence.png
+    - assets/images/gangnam.png
+    - assets/images/jung.png
+    - assets/images/landing.png
+    - assets/images/logo.png
+    - assets/images/logo2.png
+    - assets/images/moisturizer.png
+    - assets/images/myeongdong.png
+    - assets/images/products.png
+    - assets/images/promo1.png
+    - assets/images/promo2.png
+    - assets/images/seocho.png
+    - assets/images/serum.png
+    - assets/images/submitad.png
 
-  # An image asset can refer to one or more resolution-specific "variants", see
-  # https://flutter.dev/to/resolution-aware-images
-
-  # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/to/asset-from-package
-
-  # To add custom fonts to your application, add a fonts section here,
-  # in this "flutter" section. Each entry in this list should have a
-  # "family" key with the font family name, and a "fonts" key with a
-  # list giving the asset and other descriptors for the font. For
-  # example:
   fonts:
     - family: Laurasia
       fonts:

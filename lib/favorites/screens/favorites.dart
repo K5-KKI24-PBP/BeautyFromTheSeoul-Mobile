@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:beauty_from_the_seoul_mobile/shared/widgets/navbar.dart';
 import 'package:beauty_from_the_seoul_mobile/catalogue/models/products.dart';
-import 'package:beauty_from_the_seoul_mobile/catalogue/widgets/product_detail.dart';
+import 'package:beauty_from_the_seoul_mobile/catalogue/screens/product_detail.dart';
 
 class FavoritePage extends StatefulWidget {
   const FavoritePage({super.key});

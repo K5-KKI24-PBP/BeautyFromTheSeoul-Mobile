@@ -1,6 +1,6 @@
 import 'package:beauty_from_the_seoul_mobile/catalogue/models/products.dart';
 import 'package:flutter/material.dart';
-import 'product_detail.dart';
+import '../screens/product_detail.dart';
 
 class ProductCard extends StatelessWidget {
   final Products product;

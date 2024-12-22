@@ -2,7 +2,7 @@ import 'package:beauty_from_the_seoul_mobile/catalogue/models/products.dart';
 import 'package:beauty_from_the_seoul_mobile/catalogue/models/review.dart'; 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'product_reviews.dart';
+import '../widgets/product_reviews.dart';
 
 class ProductDetail extends StatefulWidget {  
   final Products product;
