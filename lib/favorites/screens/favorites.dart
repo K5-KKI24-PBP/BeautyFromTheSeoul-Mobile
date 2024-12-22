@@ -178,7 +178,7 @@ class _FavoritePageState extends State<FavoritePage> {
             unselectedLabelColor: Colors.grey,
             indicator: const UnderlineTabIndicator(
               borderSide: BorderSide(width: 3.0, color: Colors.black),
-              insets: EdgeInsets.symmetric(horizontal: 18.0),
+              insets: EdgeInsets.symmetric(horizontal: 8.0),
             ),
             tabs: categories.map((category) => Tab(text: category)).toList(),
           ),
