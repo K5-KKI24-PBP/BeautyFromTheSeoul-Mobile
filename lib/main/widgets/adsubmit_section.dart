@@ -32,7 +32,7 @@ class AdSubmissionSection extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(16.0),
               child: Image.asset(
-                'images/submitad.png',
+                'assets/images/submitad.png',
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: double.infinity,
