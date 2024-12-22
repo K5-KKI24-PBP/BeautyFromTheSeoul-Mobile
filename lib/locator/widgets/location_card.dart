@@ -42,7 +42,7 @@ class LocationCard extends StatelessWidget {
 
   Widget _buildImageSlide(String imageUrl) {
     return Container(
-      height: 170,
+      height: 100, // Slightly reduced height
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(12.0)),
         image: DecorationImage(
@@ -101,89 +101,111 @@ class LocationCard extends StatelessWidget {
   }
 
   Widget _buildLocationCard(BuildContext context, String imageUrl, String fullStreet) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isLargeScreen = screenWidth > 600;
+    final isSmallScreen = screenWidth < 320; // Added check for very small screens
+    
+    // Calculate responsive spacing
+    final double topSpacing = isLargeScreen ? 16.0 : 12.0;
+    final double contentPadding = isLargeScreen ? 12.0 : 8.0;
+    final double buttonSpacing = isLargeScreen ? 20.0 : 12.0;
+
     return Card(
       elevation: 6.0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
         side: BorderSide(
-          color: _getBorderColor(index),  // Apply border color dynamically
+          color: _getBorderColor(index),
           width: 3.0,
         ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildImageSlide(imageUrl),
-
+          SizedBox(height: topSpacing),
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.symmetric(horizontal: contentPadding),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   location['storeName'] ?? '',
-                  maxLines: 2,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 18.0,
+                  style: TextStyle(
+                    fontSize: isLargeScreen ? 16.0 : 15.0,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                   ),
                 ),
-                const SizedBox(height: 8.0),
+                const SizedBox(height: 4.0),
                 Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.location_on,
                       color: Colors.red,
-                      size: 18.0,
+                      size: isLargeScreen ? 18.0 : 16.0,
                     ),
                     const SizedBox(width: 4.0),
                     Expanded(
                       child: Text(
                         fullStreet,
-                        maxLines: 2,
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 14.0,
+                          fontSize: isLargeScreen ? 13.0 : 12.0,
                           color: Colors.grey[700],
                         ),
                       ),
                     ),
                   ],
                 ),
+                SizedBox(height: buttonSpacing),
+                SizedBox(
+                  width: double.infinity,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: SizedBox(
+                      width: isSmallScreen ? 120 : 160,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          final gmapsLink = location['gmapsLink'] ?? '';
+                          if (gmapsLink.isNotEmpty) {
+                            _launchGmaps(gmapsLink);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Google Maps link unavailable')),
+                            );
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue[900],
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(
+                            vertical: isLargeScreen ? 8.0 : 6.0,
+                            horizontal: isSmallScreen ? 8.0 : 12.0,
+                          ),
+                        ),
+                        icon: Icon(
+                          Icons.map,
+                          size: isSmallScreen ? 14.0 : (isLargeScreen ? 18.0 : 16.0),
+                        ),
+                        label: Text(
+                          isSmallScreen ? 'Directions' : 'How Do I Get There?',
+                          style: TextStyle(
+                            fontSize: isSmallScreen ? 11.0 : (isLargeScreen ? 13.0 : 12.0),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: buttonSpacing / 2),
               ],
             ),
           ),
-          
-          const Spacer(),
-          Divider(height: 1.0, color: Colors.grey[300]),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-            child: Column(
-              children: [
-                ElevatedButton.icon(
-                  onPressed: () {
-                    final gmapsLink = location['gmapsLink'] ?? '';
-                    if (gmapsLink.isNotEmpty) {
-                      _launchGmaps(gmapsLink);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Google Maps link unavailable')),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue[900],
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size.fromHeight(45), // Full width button
-                  ),
-                  icon: const Icon(Icons.map),
-                  label: const Text('How Do I Get There?'),
-                ),
-              ],
-            ),
-          )
         ],
       ),
     );

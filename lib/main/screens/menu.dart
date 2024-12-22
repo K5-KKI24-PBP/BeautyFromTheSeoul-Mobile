@@ -408,7 +408,7 @@ class _AdminMenuState extends BaseMenuState<AdminMenu> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Beauty From The Seoul - Admin',
+          'Beauty From The Seoul',
           style: TextStyle(
             fontFamily: 'Laurasia',
             color: Colors.white,
