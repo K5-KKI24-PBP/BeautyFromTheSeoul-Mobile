@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:beauty_from_the_seoul_mobile/events/models/events.dart';
-import 'package:beauty_from_the_seoul_mobile/events/models/rsvp.dart';
 
 class EventCard extends StatelessWidget {
   final String? name;  // Can be null
@@ -18,7 +16,6 @@ class EventCard extends StatelessWidget {
   final VoidCallback onRsvp;
 
   const EventCard({
-    Key? key,
     required this.name,
     required this.description,
     required this.startDate,
@@ -63,8 +60,8 @@ class EventCard extends StatelessWidget {
               '$name in $location', 
               textAlign: TextAlign.center,
               style: const TextStyle(
+                fontFamily: 'Laurasia',
                 fontSize: 20, 
-                fontWeight: FontWeight.bold,
                 color: Colors.white, 
               ),
             ),
@@ -78,6 +75,7 @@ class EventCard extends StatelessWidget {
                   description?? 'No description available',
                   style: const TextStyle(
                     fontSize: 16,
+                    fontFamily: 'Laurasia',
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                   ),
@@ -86,6 +84,7 @@ class EventCard extends StatelessWidget {
                 Text(
                   '$formattedStartDate - $formattedEndDate',
                   style: const TextStyle(
+                    fontFamily: 'TT',
                     fontSize: 16,
                     color: Colors.black,
                   ),
@@ -100,6 +99,7 @@ class EventCard extends StatelessWidget {
                   child: Text(
                     promotionType?? 'No promotion type available',
                     style: const TextStyle(
+                      fontFamily: 'TT',
                       fontSize: 16,
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -126,20 +126,26 @@ class EventCard extends StatelessWidget {
                         child: const Text('Delete'),
                       ),
                     ] else ...[
-                      ElevatedButton(
-                        onPressed: () {
-                          if (isRsvp) {
-                            onCancelRsvp();
-                          } else {
-                            onRsvp();
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor: const Color(0xFF071a58),
+                      if (isRsvp) ...[
+                        ElevatedButton(
+                          onPressed: onCancelRsvp,
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: const Color(0xFF071a58),
+                            backgroundColor: const Color.fromARGB(255, 254, 250, 244),
+                            side: BorderSide(color: const Color(0xFF071a58), width: 2),
+                          ),
+                          child: const Text('Cancel RSVP', style: TextStyle(fontFamily: 'TT')),
                         ),
-                        child: isRsvp ? const Text('Cancel RSVP') : const Text('RSVP'),
-                      ),
+                      ] else ...[
+                        ElevatedButton(
+                          onPressed: onRsvp,
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: const Color.fromARGB(255, 254, 250, 244),
+                            backgroundColor: const Color(0xFF071a58),
+                          ),
+                          child: const Text('RSVP', style: TextStyle(fontFamily: 'TT')),
+                        ),
+                      ],
                     ],
                   ],
                 ),
