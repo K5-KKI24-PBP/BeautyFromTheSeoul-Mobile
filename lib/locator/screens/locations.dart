@@ -3,6 +3,7 @@ import 'package:beauty_from_the_seoul_mobile/shared/widgets/navbar.dart';
 import 'package:beauty_from_the_seoul_mobile/locator/widgets/location_entry.dart';
 import 'package:beauty_from_the_seoul_mobile/locator/widgets/edit_location.dart';
 import 'package:beauty_from_the_seoul_mobile/locator/widgets/location_card.dart';
+import 'package:beauty_from_the_seoul_mobile/locator/widgets/google_maps.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -136,111 +137,134 @@ class _LocatorPageState extends State<LocatorPage> {
       appBar: AppBar(
         title: const Text('Store Locator'),
       ),
-      body: Column(
-        children: [
-          Stack(
-            children: [
-              Container(
-                height: 100,
-                color: Colors.black.withOpacity(0.5),
-                alignment: Alignment.center,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 3),
-                    const Text(
-                      'Find a skincare store near you!',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
+      body: CustomScrollView(
+        slivers: [
+          // Header Section
+          SliverToBoxAdapter(
+            child: Stack(
+              children: [
+                Container(
+                  height: 100,
+                  color: Colors.black.withOpacity(0.5),
+                  alignment: Alignment.center,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 3),
+                      const Text(
+                        'Find a skincare store near you!',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 16),
-                    Container(
-                      width: 60,
-                      height: 3,
-                      color: const Color(0xFFE1DCCA),
-                    ),
-                  ],
+                      const SizedBox(height: 16),
+                      Container(
+                        width: 60,
+                        height: 3,
+                        color: const Color(0xFFE1DCCA),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: DropdownButton<String>(
-              isExpanded: true,
-              hint: const Text("Filter by District"),
-              value: selectedDistrict,
-              items: [
-                const DropdownMenuItem(
-                  value: '',
-                  child: Text('All Districts'),
-                ),
-                ...districts.map((district) {
-                  return DropdownMenuItem(
-                    value: district,
-                    child: Text(district),
-                  );
-                }).toList(),
               ],
-              onChanged: (value) {
-                _filterByDistrict(value);
-              },
             ),
           ),
 
-          Expanded(
-          child: isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : filteredLocations.isEmpty
-                  ? const Center(
-                      child: Text(
-                        'No locations available.',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                    )
-                  : GridView.builder(
-                      padding: const EdgeInsets.all(8.0),
-                      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 400,  // Maximum width per card
-                        mainAxisSpacing: 12.0,
-                        crossAxisSpacing: 12.0,
-                        childAspectRatio: 0.75,  // Adjust for card height
-                      ),
-                      itemCount: filteredLocations.length,
-                      itemBuilder: (context, index) {
-                        final location = filteredLocations[index];
-                        return LocationCard(
-                          location: location,
-                          isStaff: isStaff,
-                          onDelete: deleteLocation,
-                          onEdit: (id) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => EditLocationPage(
-                                  id: id,
-                                  storeName: location['storeName'] ?? '',
-                                  streetName: location['streetName'] ?? '',
-                                  district: location['district'] ?? '',
-                                  gmapsLink: location['gmapsLink'] ?? '',
-                                  storeImage: location['storeImage'] ?? '',
-                                  onSave: _fetchLocations,
-                                ),
-                              ),
-                            );
-                          },
-                          index: index,
-                        );
-                      },
-                    ),
-        )
+          // Dropdown Filter
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: DropdownButton<String>(
+                isExpanded: true,
+                hint: const Text("Filter by District"),
+                value: selectedDistrict,
+                items: [
+                  const DropdownMenuItem(
+                    value: '',
+                    child: Text('All Districts'),
+                  ),
+                  ...districts.map((district) {
+                    return DropdownMenuItem(
+                      value: district,
+                      child: Text(district),
+                    );
+                  }).toList(),
+                ],
+                onChanged: (value) {
+                  _filterByDistrict(value);
+                },
+              ),
+            ),
+          ),
 
+          // Map Section
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 300, // Adjust the height as needed
+              child: GoogleMaps(), // Your GoogleMaps widget here
+            ),
+          ),
+
+          // Product List Section
+          SliverToBoxAdapter(
+            child: isLoading
+                ? const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(20),
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
+                : filteredLocations.isEmpty
+                    ? const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
+                          child: Text(
+                            'No locations available.',
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      )
+                    : const SizedBox.shrink(),
+          ),
+          if (!isLoading && filteredLocations.isNotEmpty)
+            SliverGrid(
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 400, // Maximum width per card
+                mainAxisSpacing: 12.0,
+                crossAxisSpacing: 12.0,
+                childAspectRatio: 0.75, // Adjust for card height
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final location = filteredLocations[index];
+                  return LocationCard(
+                    location: location,
+                    isStaff: isStaff,
+                    onDelete: deleteLocation,
+                    onEdit: (id) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditLocationPage(
+                            id: id,
+                            storeName: location['storeName'] ?? '',
+                            streetName: location['streetName'] ?? '',
+                            district: location['district'] ?? '',
+                            gmapsLink: location['gmapsLink'] ?? '',
+                            storeImage: location['storeImage'] ?? '',
+                            onSave: _fetchLocations,
+                          ),
+                        ),
+                      );
+                    },
+                    index: index,
+                  );
+                },
+                childCount: filteredLocations.length,
+              ),
+            ),
         ],
       ),
       floatingActionButton: isStaff
