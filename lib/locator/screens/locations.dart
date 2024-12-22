@@ -232,9 +232,9 @@ class _LocatorPageState extends State<LocatorPage> {
             SliverGrid(
               gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                 maxCrossAxisExtent: 400, // Maximum width per card
-                mainAxisSpacing: 12.0,
-                crossAxisSpacing: 12.0,
-                childAspectRatio: 0.75, // Adjust for card height
+                mainAxisSpacing: 10.0,
+                crossAxisSpacing: 20.0,
+                childAspectRatio: 0.62, // Adjust for card height
               ),
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
@@ -270,8 +270,8 @@ class _LocatorPageState extends State<LocatorPage> {
       floatingActionButton: isStaff
           ? FloatingActionButton(
               onPressed: _navigateToAddLocation,
-              backgroundColor: Colors.blue,
-              child: const Icon(Icons.add),
+              backgroundColor: const Color(0xFF071a58),
+              child: const Icon(Icons.add, color: Colors.white),
             )
           : null,
       bottomNavigationBar: const Material3BottomNav(),
