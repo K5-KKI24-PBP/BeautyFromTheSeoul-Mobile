@@ -46,6 +46,7 @@ class _EventFormState extends State<EventForm> {
       appBar: AppBar(
         title: const Text('Add New Event',
           style: TextStyle(
+            fontFamily: 'Laurasia',
             color: Colors.white,
             fontSize: 24,
             fontWeight: FontWeight.bold,

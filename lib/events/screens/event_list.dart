@@ -266,11 +266,7 @@ class _EventsPageState extends State<EventPage> {
         ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
-            color: Color(0xFF071a58),
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(8), 
-              topRight: Radius.circular(8)
-            ),
+            color: Color(0xFF071a58), 
           ),
         ),
       ),
