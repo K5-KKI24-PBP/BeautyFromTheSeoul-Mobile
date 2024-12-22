@@ -24,6 +24,7 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 2,
+      color: const Color.fromARGB(255, 254, 250, 244),
       margin: const EdgeInsets.all(8),
       child: GestureDetector(
         onTap: () {
