@@ -117,7 +117,7 @@ class AdCarousel extends StatelessWidget {
   Widget build(BuildContext context) {
     return CarouselSlider(
       items: [
-        _buildImageSlide('images/logo.png', screenWidth),  
+        _buildImageSlide('assets/images/logo.png', screenWidth),  
         ...ads.map(
           (ad) => GestureDetector(
             onLongPress: isAdmin ? () => onLongPress!(ad) : null,

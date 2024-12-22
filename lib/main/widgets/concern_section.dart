@@ -12,21 +12,21 @@ class SkinConcernSection extends StatelessWidget {
         "type": "Eye Treatment",
         "description": "Brighten your under-eye area with our targeted treatments.",
         "color": const Color(0xff9fc6ff),
-        "image": 'images/dark_circles.png',
+        "image": 'assets/images/dark_circles.png',
       },
       {
         "title": "Acne",
         "type": "Other Spot Treatments",
         "description": "Fight breakouts effectively with our specially formulated solutions for clearer skin.",
         "color": const Color(0xffffc03e),
-        "image": 'images/acne.png',
+        "image": 'assets/images/acne.png',
       },
       {
         "title": "Dry Lips",
         "type": "Lip Treatment",
         "description": "Deeply nourish and hydrate your lips to restore its natural moisture balance.",
         "color": const Color(0xffccc2fe),
-        "image": 'images/dry_lips.png',
+        "image": 'assets/images/dry_lips.png',
       },
     ];
 

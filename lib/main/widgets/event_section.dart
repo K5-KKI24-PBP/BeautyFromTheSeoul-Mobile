@@ -10,12 +10,12 @@ class PromotionEventSection extends StatelessWidget {
       {
         "title": "Olive Young Sale",
         "discount": "40%",
-        "image": 'images/promo1.png',
+        "image": 'assets/images/promo1.png',
       },
       {
         "title": "Kayla's Birthday",
         "discount": "100%",
-        "image": 'images/promo2.png',
+        "image": 'assets/images/promo2.png',
       },
     ];
 

@@ -193,18 +193,25 @@ class _LocatorPageState extends State<LocatorPage> {
           ),
 
           Expanded(
-            child: isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(),  
-                  )
-                : filteredLocations.isEmpty
+          child: isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : filteredLocations.isEmpty
                   ? const Center(
                       child: Text(
                         'No locations available.',
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     )
-                  : ListView.builder(
+                  : GridView.builder(
+                      padding: const EdgeInsets.all(8.0),
+                      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 400,  // Maximum width per card
+                        mainAxisSpacing: 12.0,
+                        crossAxisSpacing: 12.0,
+                        childAspectRatio: 0.75,  // Adjust for card height
+                      ),
                       itemCount: filteredLocations.length,
                       itemBuilder: (context, index) {
                         final location = filteredLocations[index];
@@ -228,10 +235,12 @@ class _LocatorPageState extends State<LocatorPage> {
                               ),
                             );
                           },
+                          index: index,
                         );
                       },
                     ),
-          ),
+        )
+
         ],
       ),
       floatingActionButton: isStaff
