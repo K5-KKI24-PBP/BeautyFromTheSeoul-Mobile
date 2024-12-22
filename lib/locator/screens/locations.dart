@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class LocatorPage extends StatefulWidget {
-  final String? initialDistrict; 
+  final String? initialDistrict;
 
   const LocatorPage({super.key, this.initialDistrict});
 
@@ -46,7 +46,7 @@ class _LocatorPageState extends State<LocatorPage> {
 
     try {
       setState(() {
-        isLoading = true;  // Start loading
+        isLoading = true;
       });
 
       final response = await http.get(Uri.parse(url));
@@ -105,7 +105,7 @@ class _LocatorPageState extends State<LocatorPage> {
     }
   }
 
-  Future<void> deleteLocation(String id) async {
+    Future<void> deleteLocation(String id) async {
     final url = 'https://beauty-from-the-seoul.vercel.app/store-locator/delete_location/$id/';
 
     try {
@@ -137,48 +137,92 @@ class _LocatorPageState extends State<LocatorPage> {
       appBar: AppBar(
         title: const Text('Store Locator'),
       ),
-      body: CustomScrollView(
-        slivers: [
-          // Header Section
-          SliverToBoxAdapter(
-            child: Stack(
-              children: [
-                Container(
-                  height: 100,
-                  color: Colors.black.withOpacity(0.5),
-                  alignment: Alignment.center,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 3),
-                      const Text(
-                        'Find a skincare store near you!',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 16),
-                      Container(
-                        width: 60,
-                        height: 3,
-                        color: const Color(0xFFE1DCCA),
-                      ),
-                    ],
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Stack(
+            children: [
+              Container(
+                height: 250,
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('images/locator.png'),  
+                    fit: BoxFit.cover,
                   ),
                 ),
-              ],
-            ),
+              ),
+              const Positioned(
+                top: 75,
+                left: 0,
+                right: 0,
+                child: Column(
+                  children: [
+                    Text(
+                      'Store Locator',
+                      style: TextStyle(
+                        fontSize: 48,
+                        color: Colors.white,
+                        fontFamily: 'Laurasia',
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'Find a skincare store near you!',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontFamily: 'TT',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-
-          // Dropdown Filter
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
+            const SizedBox(height: 40),
+            const Text(
+              'Check Out Our Seoul Skincare Stores Map!',
+              style: TextStyle(
+                fontSize: 24,
+                fontFamily: 'Laurasia',
+                color:  Color(0xff071a58),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Center(
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.8,
+                height: 400,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: const Color(0xff071a58),  
+                    width: 6,
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: GoogleMaps(),
+                ),
+              ),
+            ),
+            const SizedBox(height: 30),
+            const Text(
+              'Which district is closest to you?',
+              style: TextStyle(
+                fontSize: 18,
+                fontFamily: 'TT',
+                color: Color(0xff071a58),
+              ),
+            ),
+            const SizedBox(height: 15),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: DropdownButton<String>(
                 isExpanded: true,
-                hint: const Text("Filter by District"),
+                hint: const Text("All Districts"),
                 value: selectedDistrict,
                 items: [
                   const DropdownMenuItem(
@@ -197,19 +241,8 @@ class _LocatorPageState extends State<LocatorPage> {
                 },
               ),
             ),
-          ),
-
-          // Map Section
-          SliverToBoxAdapter(
-            child: SizedBox(
-              height: 300, // Adjust the height as needed
-              child: GoogleMaps(), // Your GoogleMaps widget here
-            ),
-          ),
-
-          // Product List Section
-          SliverToBoxAdapter(
-            child: isLoading
+            const SizedBox(height: 30),
+            isLoading
                 ? const Center(
                     child: Padding(
                       padding: EdgeInsets.all(20),
@@ -222,50 +255,51 @@ class _LocatorPageState extends State<LocatorPage> {
                           padding: EdgeInsets.all(20),
                           child: Text(
                             'No locations available.',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              fontFamily: 'TT',
+                              fontSize: 18),
                           ),
                         ),
                       )
-                    : const SizedBox.shrink(),
-          ),
-          if (!isLoading && filteredLocations.isNotEmpty)
-            SliverGrid(
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 400, // Maximum width per card
-                mainAxisSpacing: 10.0,
-                crossAxisSpacing: 20.0,
-                childAspectRatio: 0.62, // Adjust for card height
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final location = filteredLocations[index];
-                  return LocationCard(
-                    location: location,
-                    isStaff: isStaff,
-                    onDelete: deleteLocation,
-                    onEdit: (id) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EditLocationPage(
-                            id: id,
-                            storeName: location['storeName'] ?? '',
-                            streetName: location['streetName'] ?? '',
-                            district: location['district'] ?? '',
-                            gmapsLink: location['gmapsLink'] ?? '',
-                            storeImage: location['storeImage'] ?? '',
-                            onSave: _fetchLocations,
-                          ),
+                    : GridView.builder(
+                        padding: const EdgeInsets.all(20),
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 400,
+                          mainAxisSpacing: 12.0,
+                          crossAxisSpacing: 20.0,
+                          childAspectRatio: 0.62,
                         ),
-                      );
-                    },
-                    index: index,
-                  );
-                },
-                childCount: filteredLocations.length,
-              ),
-            ),
-        ],
+                        itemCount: filteredLocations.length,
+                        itemBuilder: (context, index) {
+                          final location = filteredLocations[index];
+                          return LocationCard(
+                            location: location,
+                            isStaff: isStaff,
+                            onDelete: deleteLocation,
+                            onEdit: (id) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => EditLocationPage(
+                                    id: id,
+                                    storeName: location['storeName'] ?? '',
+                                    streetName: location['streetName'] ?? '',
+                                    district: location['district'] ?? '',
+                                    gmapsLink: location['gmapsLink'] ?? '',
+                                    storeImage: location['storeImage'] ?? '',
+                                    onSave: _fetchLocations,
+                                  ),
+                                ),
+                              );
+                            },
+                            index: index,
+                          );
+                        },
+                      ),
+          ],
+        ),
       ),
       floatingActionButton: isStaff
           ? FloatingActionButton(
