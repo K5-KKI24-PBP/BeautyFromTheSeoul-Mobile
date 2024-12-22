@@ -71,7 +71,7 @@ class ConcentricAnimationOnboarding extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Image.asset(
-                    'images/logo2.png',
+                    'assets/images/logo2.png',
                     height: 175,
                   ),
                 ],
