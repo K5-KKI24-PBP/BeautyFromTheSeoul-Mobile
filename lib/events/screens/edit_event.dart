@@ -98,11 +98,22 @@ class _EditEventFormState extends State<EditEventForm> {
       );
 
       final responseBody = jsonDecode(response.body);
-      if (response.statusCode == 200) {
+      if (responseBody['status'] == 'success') {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Event successfully updated!')),
+          const SnackBar(
+            content: Text("Event successfully updated!"),
+          ),
         );
-        Navigator.pop(context);
+        // Pass back updated event data to main page
+        Navigator.pop(context, {
+          'id': widget.eventId,
+          'title': _titleController.text,
+          'description': _descriptionController.text,
+          'start_date': _startDateController.text,
+          'end_date': _endDateController.text,
+          'location': _locationController.text,
+          'promotion_type': _promotionTypeController.text,
+        });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to update event: ${responseBody["message"]}')),
@@ -144,18 +155,21 @@ class _EditEventFormState extends State<EditEventForm> {
               _buildDateField("End Date", _endDateController, _endDate, false),
               _buildTextField(_locationController, "Location", "Enter event location"),
               _buildTextField(_promotionTypeController, "Promotion Type", "Enter promotion type"),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStateProperty.all<Color>(
-                      const Color.fromARGB(255, 12, 26, 84)),
-                  ),
-                  onPressed: _submitData,
-                  child: const Text(
-                    "Save",
-                    style: TextStyle(
-                      color: Colors.white,
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all<Color>(
+                        const Color.fromARGB(255, 12, 26, 84)),
+                    ),
+                    onPressed: _submitData,
+                    child: const Text(
+                      "Save",
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),

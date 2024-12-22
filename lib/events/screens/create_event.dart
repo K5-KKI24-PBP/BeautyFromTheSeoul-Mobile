@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:beauty_from_the_seoul_mobile/events/screens/event_list.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -125,17 +124,20 @@ class _EventFormState extends State<EventForm> {
                             }),
                           );
                           final responseBody = jsonDecode(response.body);
-                          print(responseBody);
                           if (responseBody['status'] == 'success') {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text("New event has saved successfully!"),
                               ),
                             );
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => const EventPage()),
-                            );
+                            Navigator.pop(context, {
+                              'title': _title,
+                              'description': _description,
+                              'start_date': _startDate,
+                              'end_date': _endDate,
+                              'location': _location,
+                              'promotion_type': _promotionType,
+                            });
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
