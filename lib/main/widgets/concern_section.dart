@@ -76,8 +76,9 @@ class SkinConcernSection extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => CataloguePage(
-                          filterProductType: concern['type'], 
+                          filterProductType: concern['type'],
                         ),
+                        settings: const RouteSettings(name: '/catalogue'),
                       ),
                     );
                   },

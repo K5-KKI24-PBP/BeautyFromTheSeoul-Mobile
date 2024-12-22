@@ -47,6 +47,7 @@ class CategorySection extends StatelessWidget {
                         builder: (context) => CataloguePage(
                           filterProductType: category['title'],  
                         ),
+                        settings: const RouteSettings(name: '/catalogue')
                       ),
                     );
                   },

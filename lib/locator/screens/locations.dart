@@ -8,7 +8,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class LocatorPage extends StatefulWidget {
-  const LocatorPage({super.key});
+  final String? initialDistrict; 
+
+  const LocatorPage({super.key, this.initialDistrict});
 
   @override
   State<LocatorPage> createState() => _LocatorPageState();
@@ -16,13 +18,18 @@ class LocatorPage extends StatefulWidget {
 
 class _LocatorPageState extends State<LocatorPage> {
   bool isStaff = false;
+  bool isLoading = true;
   List<Map<String, dynamic>> locations = [];
+  List<Map<String, dynamic>> filteredLocations = [];
+  String? selectedDistrict;
+
+  List<String> districts = [];
 
   @override
   void initState() {
     super.initState();
     _checkUserRole();
-    _fetchLocations(); // Fetch locations from the server
+    _fetchLocations();
   }
 
   Future<void> _checkUserRole() async {
@@ -34,26 +41,56 @@ class _LocatorPageState extends State<LocatorPage> {
   }
 
   Future<void> _fetchLocations() async {
-    const Url = 'https://beauty-from-the-seoul.vercel.app/store-locator/fetch_location/';
+    const url = 'https://beauty-from-the-seoul.vercel.app/store-locator/fetch_location/';
 
     try {
-      final response = await http.get(Uri.parse(Url));
+      setState(() {
+        isLoading = true;  // Start loading
+      });
+
+      final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        final locationList = List<Map<String, dynamic>>.from(data['locations']);
 
-        // Assuming the API returns a list of locations under the "locations" key
         setState(() {
-          locations = List<Map<String, dynamic>>.from(data['locations']);
+          locations = locationList;
+          districts = _extractDistricts(locations);
+
+          if (widget.initialDistrict != null && widget.initialDistrict!.isNotEmpty) {
+            _filterByDistrict(widget.initialDistrict);
+          } else {
+            filteredLocations = locations;
+          }
+          isLoading = false;
         });
-        print(locations);
       } else {
-        // Handle server errors
         throw Exception('Failed to load locations');
       }
     } catch (error) {
-      // Handle network errors
       print('Error fetching locations: $error');
     }
+  }
+
+  List<String> _extractDistricts(List<Map<String, dynamic>> locations) {
+    Set<String> districtSet = {};
+    for (var location in locations) {
+      districtSet.add(location['district']);
+    }
+    return districtSet.toList();
+  }
+
+  void _filterByDistrict(String? district) {
+    setState(() {
+      selectedDistrict = district;
+      if (district == null || district.isEmpty) {
+        filteredLocations = locations;
+      } else {
+        filteredLocations = locations
+            .where((location) => location['district'] == district)
+            .toList();
+      }
+    });
   }
 
   Future<void> _navigateToAddLocation() async {
@@ -62,13 +99,11 @@ class _LocatorPageState extends State<LocatorPage> {
       MaterialPageRoute(builder: (context) => const LocatorEntryPage()),
     );
 
-    // If the result is true, fetch locations again
     if (result == true) {
       _fetchLocations();
     }
   }
 
-  // Delete location from the backend
   Future<void> deleteLocation(String id) async {
     final url = 'https://beauty-from-the-seoul.vercel.app/store-locator/delete_location/$id/';
 
@@ -80,14 +115,18 @@ class _LocatorPageState extends State<LocatorPage> {
 
       if (response.statusCode == 200) {
         setState(() {
-          locations.removeWhere((location) => location['id'] == id); // Remove from UI
+          locations.removeWhere((location) => location['id'] == id);
+          _filterByDistrict(selectedDistrict);
         });
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Location deleted successfully')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Location deleted successfully')));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to delete location')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Failed to delete location')));
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error deleting location: $e')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error deleting location: $e')));
     }
   }
 
@@ -128,52 +167,81 @@ class _LocatorPageState extends State<LocatorPage> {
               ),
             ],
           ),
+
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: DropdownButton<String>(
+              isExpanded: true,
+              hint: const Text("Filter by District"),
+              value: selectedDistrict,
+              items: [
+                const DropdownMenuItem(
+                  value: '',
+                  child: Text('All Districts'),
+                ),
+                ...districts.map((district) {
+                  return DropdownMenuItem(
+                    value: district,
+                    child: Text(district),
+                  );
+                }).toList(),
+              ],
+              onChanged: (value) {
+                _filterByDistrict(value);
+              },
+            ),
+          ),
+
           Expanded(
-            child: locations.isEmpty
+            child: isLoading
                 ? const Center(
-                    child: Text(
-                    'No locations available.',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
+                    child: CircularProgressIndicator(),  
                   )
-                : ListView.builder(
-                    itemCount: locations.length,
-                    itemBuilder: (context, index) {
-                      final location = locations[index];
-                      return LocationCard(
-                        location: location,
-                        isStaff: isStaff,
-                        onDelete: deleteLocation,
-                        onEdit: (id) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EditLocationPage(
-                                id: id,
-                                storeName: location['storeName'] ?? '',
-                                streetName: location['streetName'] ?? '',
-                                district: location['district'] ?? '',
-                                gmapsLink: location['gmapsLink'] ?? '',
-                                storeImage: location['storeImage'] ?? '',
-                                onSave: _fetchLocations,
+                : filteredLocations.isEmpty
+                  ? const Center(
+                      child: Text(
+                        'No locations available.',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: filteredLocations.length,
+                      itemBuilder: (context, index) {
+                        final location = filteredLocations[index];
+                        return LocationCard(
+                          location: location,
+                          isStaff: isStaff,
+                          onDelete: deleteLocation,
+                          onEdit: (id) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditLocationPage(
+                                  id: id,
+                                  storeName: location['storeName'] ?? '',
+                                  streetName: location['streetName'] ?? '',
+                                  district: location['district'] ?? '',
+                                  gmapsLink: location['gmapsLink'] ?? '',
+                                  storeImage: location['storeImage'] ?? '',
+                                  onSave: _fetchLocations,
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
+                            );
+                          },
+                        );
+                      },
+                    ),
           ),
         ],
       ),
       floatingActionButton: isStaff
-        ? FloatingActionButton(
-            onPressed: _navigateToAddLocation,
-            child: const Icon(Icons.add),
-            backgroundColor: Colors.blue,
-          )
-        : null,  // When isStaff is false, no floating action button will be shown
-    bottomNavigationBar: const Material3BottomNav(),
+          ? FloatingActionButton(
+              onPressed: _navigateToAddLocation,
+              backgroundColor: Colors.blue,
+              child: const Icon(Icons.add),
+            )
+          : null,
+      bottomNavigationBar: const Material3BottomNav(),
     );
   }
 }
