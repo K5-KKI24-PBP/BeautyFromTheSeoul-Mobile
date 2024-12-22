@@ -137,7 +137,7 @@ class AdCarousel extends StatelessWidget {
   Widget _buildImageSlide(String imageUrl, double width) {
     return Container(
       width: width,
-      height: 300,
+      height: 250,
       decoration: BoxDecoration(
         image: DecorationImage(
           image: imageUrl.startsWith('http')
@@ -208,7 +208,7 @@ class _CustomerMenuState extends BaseMenuState<CustomerMenu> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Beauty From The Seoul - Customer',
+          'Beauty From The Seoul',
           style: TextStyle(
             fontFamily: 'Laurasia',
             color: Colors.white,
@@ -275,6 +275,9 @@ class _AdminMenuState extends BaseMenuState<AdminMenu> {
     );
 
     if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Successfully approved ad!')),
+      );
       fetchAds();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -289,6 +292,9 @@ class _AdminMenuState extends BaseMenuState<AdminMenu> {
     );
 
     if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Successfully deleted ad!')),
+      );
       fetchAds();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -312,7 +318,7 @@ class _AdminMenuState extends BaseMenuState<AdminMenu> {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Ad updated successfully')),
+          const SnackBar(content: Text('Ad updated successfully!')),
         );
         fetchAds(); 
       } else {
