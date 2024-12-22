@@ -259,9 +259,9 @@ class _EventsPageState extends State<EventPage> {
         title: const Text(
           'Promotion Events',
           style: TextStyle(
-            fontFamily: 'Laurasia',
             color: Colors.white,
             fontSize: 24,
+            fontWeight: FontWeight.bold,
           ),
         ),
         flexibleSpace: Container(
@@ -276,6 +276,31 @@ class _EventsPageState extends State<EventPage> {
       ),
       body: Column(
         children: [
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              Image.asset(
+                'assets/images/events2.png',
+                width: double.infinity,
+                height: 200,
+                fit: BoxFit.cover,
+              ),
+              Container(
+                color: Colors.black.withOpacity(0.3),
+                width: double.infinity,
+                height: 200,
+              ),
+              const Text(
+                'Discover the latest events and promotions happening near you!',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Laurasia',
+                  fontSize: 24,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
           const Padding(padding: EdgeInsets.all(6)),
           OutlinedButton(
             onPressed: () => _selectDate(context), // Open the date picker
