@@ -48,6 +48,9 @@ dependencies:
   carousel_slider: ^5.0.0
   concentric_transition: ^1.0.1
   url_launcher: ^6.0.20
+  google_maps_flutter_web: ^0.5.10
+  google_maps_flutter: ^2.10.0
+  
 
 dev_dependencies:
   flutter_test:

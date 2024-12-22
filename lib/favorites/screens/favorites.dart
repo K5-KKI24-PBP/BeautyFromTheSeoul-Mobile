@@ -152,11 +152,10 @@ class _FavoritePageState extends State<FavoritePage> {
     setState(() {
       selectedSortOption = newValue;
 
-      if (selectedSortOption == 'Most Recent') {
-        // Reverse the list to show the most recent first
+      if (selectedSortOption == 'Most Oldest') {
         favorites = List.from(favorites);
         favorites.sort((a, b) => b.pk.compareTo(a.pk)); // Sort based on productId or date
-      } else if (selectedSortOption == 'Most Oldest') {
+      } else if (selectedSortOption == 'Most Recent') {
         favorites = List.from(favorites);
         favorites.sort((a, b) => a.pk.compareTo(b.pk)); // Sort based on productId or date
       }
