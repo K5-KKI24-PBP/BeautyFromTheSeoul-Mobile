@@ -9,25 +9,25 @@ class LocationSection extends StatelessWidget {
     List<Map<String, dynamic>> storeLocations = [
       {
         "district": "Jung",
-        "image": 'images/myeongdong.png',
+        "image": 'assets/images/myeongdong.png',
         "borderColor": const Color(0xff9fc6ff),
         "mapsUrl": "https://www.google.com/maps?cid=9929880658946518724",
       },
       {
         "district": "Gangnam",
-        "image": 'images/gangnam.png',
+        "image": 'assets/images/gangnam.png',
         "borderColor": const Color(0xffffc03e),
         "mapsUrl": "https://maps.google.com/?cid=5590760012686468635",
       },
       {
         "district": "Jongno",
-        "image": 'images/jongno.png',
+        "image": 'assets/images/jongno.png',
         "borderColor": const Color(0xffccc2fe),
         "mapsUrl": "https://maps.google.com/?cid=13851289114136110333",
       },
       {
         "district": "Seocho",
-        "image": 'images/seocho.png',
+        "image": 'assets/images/seocho.png',
         "borderColor": const Color(0xff9fc6ff),
         "mapsUrl": "https://maps.google.com/?cid=7114928757871534792",
       },

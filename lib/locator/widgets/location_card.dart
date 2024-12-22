@@ -6,6 +6,7 @@ class LocationCard extends StatelessWidget {
   final bool isStaff;
   final Function(String) onDelete;
   final Function(String) onEdit;
+  final int index;  // Add an index parameter to determine border color
 
   const LocationCard({
     super.key,
@@ -13,6 +14,7 @@ class LocationCard extends StatelessWidget {
     required this.isStaff,
     required this.onDelete,
     required this.onEdit,
+    required this.index,
   });
 
   Future<void> _launchGmaps(String url) async {
@@ -29,9 +31,18 @@ class LocationCard extends StatelessWidget {
     return path.startsWith('http') ? path : '$baseUrl$path';
   }
 
+  Color _getBorderColor(int index) {
+    List<Color> borderColors = [
+      const Color(0xff9fc6ff),  // Light Blue
+      const Color(0xffffc03e),  // Yellow
+      const Color(0xffccc2fe),  // Purple
+    ];
+    return borderColors[index % borderColors.length];
+  }
+
   Widget _buildImageSlide(String imageUrl) {
     return Container(
-      height: 200,
+      height: 170,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(12.0)),
         image: DecorationImage(
@@ -55,6 +66,10 @@ class LocationCard extends StatelessWidget {
         elevation: 4.0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.0),
+          side: BorderSide(
+            color: _getBorderColor(index),  // Apply border color dynamically
+            width: 3.0,
+          ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -100,9 +115,8 @@ class LocationCard extends StatelessWidget {
 
             Divider(height: 1.0, color: Colors.grey[300]),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+              child: Column(
                 children: [
                   ElevatedButton.icon(
                     onPressed: () {
@@ -118,33 +132,48 @@ class LocationCard extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue[900],
                       foregroundColor: Colors.white,
+                      minimumSize: const Size.fromHeight(45), // Full width button
                     ),
                     icon: const Icon(Icons.map),
                     label: const Text('How Do I Get There?'),
                   ),
-
-                  if (isStaff)
-                    ElevatedButton(
-                      onPressed: () => onDelete(location['id']),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.purple[100],
-                        foregroundColor: Colors.black,
-                      ),
-                      child: const Text('Delete'),
+                  
+                  if (isStaff) ...[
+                    const SizedBox(height: 8),  // Spacing between buttons
+                    
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () => onEdit(location['id']),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.amber[300],
+                              foregroundColor: Colors.black,
+                              minimumSize: const Size.fromHeight(45),  // Full width button
+                            ),
+                            child: const Text('Edit'),
+                          ),
+                        ),
+                        const SizedBox(width: 8),  // Spacing between buttons
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () => onDelete(location['id']),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.purple[100],
+                              foregroundColor: Colors.black,
+                              minimumSize: const Size.fromHeight(45),  // Full width button
+                            ),
+                            child: const Text('Delete'),
+                          ),
+                        ),
+                      ],
                     ),
-
-                  if (isStaff)
-                    ElevatedButton(
-                      onPressed: () => onEdit(location['id']),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.amber[300],
-                        foregroundColor: Colors.black,
-                      ),
-                      child: const Text('Edit'),
-                    ),
+                  ],
                 ],
               ),
-            ),
+            )
+
           ],
         ),
       ),

@@ -7,10 +7,10 @@ class CategorySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Map<String, dynamic>> categories = [
-      {"title": "Cleanser", "color": const Color(0xffffc03e), "image": 'images/cleanser.png'},
-      {"title": "Moisturizer", "color": const Color(0xff9fc6ff), "image": 'images/moisturizer.png'},
-      {"title": "Serum", "color": const Color(0xffccc2fe), "image": 'images/serum.png'},
-      {"title": "Essence", "color": const Color(0xffe1dcca), "image": 'images/essence.png'},
+      {"title": "Cleanser", "color": const Color(0xffffc03e), "image": 'assets/images/cleanser.png'},
+      {"title": "Moisturizer", "color": const Color(0xff9fc6ff), "image": 'assets/images/moisturizer.png'},
+      {"title": "Serum", "color": const Color(0xffccc2fe), "image": 'assets/images/serum.png'},
+      {"title": "Essence", "color": const Color(0xffe1dcca), "image": 'assets/images/essence.png'},
     ];
 
     double screenHeight = MediaQuery.of(context).size.height;
