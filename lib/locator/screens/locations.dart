@@ -170,7 +170,7 @@ class _LocatorPageState extends State<LocatorPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'My Favorite Products',
+          'Store Locator',
           style: TextStyle(
             fontFamily: 'Laurasia',
             color: Colors.white,

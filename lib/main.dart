@@ -1,3 +1,4 @@
+import 'package:beauty_from_the_seoul_mobile/main/screens/onboarding.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -47,7 +48,7 @@ class MyApp extends StatelessWidget {
         supportedLocales: const [
           Locale('en', ''), // Add supported locales here
         ],
-        home: const WelcomePage(),
+        home: const ConcentricAnimationOnboarding(),
       ),
     );
   }

@@ -45,10 +45,22 @@ class _RegisterPageState extends State<RegisterPage> {
 
       if (response.statusCode == 201 && data['status']) {
         if (!mounted) return;
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const LoginPage()),
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Account Successfully Created!'),
+            backgroundColor: Color(0xFF071a58),
+            duration: const Duration(seconds: 2),
+          ),
         );
+        
+        // Wait for SnackBar to show before navigating
+        Future.delayed(const Duration(seconds: 2), () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginPage()),
+          );
+        });
       } else {
         setState(() {
           _message = data['message'] ?? 'Registration failed. Please try again.';
