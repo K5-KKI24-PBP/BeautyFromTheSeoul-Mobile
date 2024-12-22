@@ -133,6 +133,40 @@ class _LocatorPageState extends State<LocatorPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    double maxCrossAxisExtent = screenWidth < 300
+        ? 200  // Smaller screen width
+        : screenWidth < 400
+            ? 250  // Medium screen width
+            : screenWidth < 600
+                ? 300  // Larger screen width
+                : 350;  // Extra large screen width
+
+    double cardAspectRatio = screenWidth < 300
+        ? 0.4
+        : screenWidth < 600
+            ? 0.58
+            : screenWidth < 700
+                ? 0.6
+                : 0.69;
+
+    double mainAxisSpacing = screenWidth < 300
+        ? 6.0
+        : screenWidth < 400
+            ? 8.0
+            : screenWidth < 600
+                ? 10.0
+                : 12.0;
+
+    double crossAxisSpacing = screenWidth < 300
+        ? 6.0
+        : screenWidth < 400
+            ? 8.0
+            : screenWidth < 600
+                ? 10.0
+                : 12.0;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Store Locator'),
@@ -265,11 +299,11 @@ class _LocatorPageState extends State<LocatorPage> {
                         padding: const EdgeInsets.all(20),
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 400,
-                          mainAxisSpacing: 12.0,
-                          crossAxisSpacing: 20.0,
-                          childAspectRatio: 0.56,
+                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: maxCrossAxisExtent,
+                          mainAxisSpacing: mainAxisSpacing,
+                          crossAxisSpacing: crossAxisSpacing,
+                          childAspectRatio: cardAspectRatio,
                         ),
                         itemCount: filteredLocations.length,
                         itemBuilder: (context, index) {

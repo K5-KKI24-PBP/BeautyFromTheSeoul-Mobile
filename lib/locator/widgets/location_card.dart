@@ -102,7 +102,7 @@ class LocationCard extends StatelessWidget {
 
   Widget _buildLocationCard(BuildContext context, String imageUrl, String fullStreet) {
     return Card(
-      elevation: 4.0,
+      elevation: 6.0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
         side: BorderSide(
@@ -122,6 +122,8 @@ class LocationCard extends StatelessWidget {
               children: [
                 Text(
                   location['storeName'] ?? '',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold,
@@ -140,6 +142,7 @@ class LocationCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         fullStreet,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontSize: 14.0,
