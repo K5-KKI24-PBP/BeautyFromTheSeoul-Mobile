@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:month_year_picker/month_year_picker.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:beauty_from_the_seoul_mobile/events/screens/create_event.dart';
 import 'package:beauty_from_the_seoul_mobile/events/screens/edit_event.dart';
 import 'package:flutter/material.dart';
