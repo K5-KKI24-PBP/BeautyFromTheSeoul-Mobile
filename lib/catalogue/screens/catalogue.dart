@@ -306,9 +306,7 @@ class _CataloguePageState extends State<CataloguePage> {
                   style: TextStyle(
                     fontFamily: 'Laurasia',
                     fontSize: screenWidth < 300 ? 14 : screenWidth < 400 ? 18 : 24,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
+                    color: Colors.white,                  ),
                 ),
               ],
             ),
