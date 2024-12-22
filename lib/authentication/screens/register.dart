@@ -45,7 +45,10 @@ class _RegisterPageState extends State<RegisterPage> {
 
       if (response.statusCode == 201 && data['status']) {
         if (!mounted) return;
-        Navigator.pop(context); // Return to login page
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+        );
       } else {
         setState(() {
           _message = data['message'] ?? 'Registration failed. Please try again.';
