@@ -18,7 +18,7 @@ class WelcomePage extends StatelessWidget {
               Expanded(
                 child: Center(
                   child: Image.asset(
-                    'images/logo.png',
+                    'assets/images/logo.png',
                     height: 500,
                     width: 500,
                   ),
